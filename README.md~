@@ -17,10 +17,10 @@ For more details and examples [See DEFT homepage](https://graphik-team.github.io
 mvn package
 ~~~
 * and add it as a maven dependency to your project
-
 ## Usage
 
-1. Express your knowledge base using the DLGP format.
+TODO: Write usage instructions
+
 ## Next Versions TODO List
 
 - Add detailed documentation.
