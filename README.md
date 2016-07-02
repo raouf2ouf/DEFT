@@ -2,7 +2,7 @@
 DEFT for Defeasible Datalog+/- is an open source software for Defeasible Reasonning based on 
 [Graal](https://graphik-team.github.io/graal). It is still under active developpment and offers a working API for defeasible reasonning in Datalog+/-.
 
-For more details and examples [See DEFT homepage](https://graphik-team.github.io/DEFT).
+For more details and examples [See DEFT homepage](https://hamhec.github.io/DEFT).
 
 
 ## Installation
