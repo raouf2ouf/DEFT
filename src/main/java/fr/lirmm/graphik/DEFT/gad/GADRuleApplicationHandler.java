@@ -47,6 +47,8 @@ public class GADRuleApplicationHandler implements RuleApplicationHandler{
 	public RuleApplier<Rule, AtomSet> getRuleApplier(ChaseHaltingCondition chaseCondition) {
 		ChaseStopConditionWithHandler chaseConditionHandler = new ChaseStopConditionWithHandler(chaseCondition, this);
 		RuleApplier<Rule, AtomSet> ruleApplier = new ExhaustiveRuleApplier<AtomSet>(chaseConditionHandler);
+		
+		/*Maven workaround*/
 		//RuleApplier<Rule, AtomSet> ruleApplier = new DefaultRuleApplier<AtomSet>(chaseCondition);
 		return ruleApplier;
 	}
