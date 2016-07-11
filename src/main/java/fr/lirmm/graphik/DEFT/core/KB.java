@@ -217,6 +217,7 @@ public class KB {
 	 * -------------------------------- */
 	public static boolean isDefeasible(Atom a) {
 		String label = "";
+		
 		// TODO: implement getLabel() for Atom in Graal!
 		return isDefeasible(label);
 	}

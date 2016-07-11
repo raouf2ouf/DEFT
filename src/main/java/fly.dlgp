@@ -8,4 +8,4 @@ nofly(X) :- penguin(X).
 ! :- nofly(X), fly(X).
 
 %----------------- Facts --------------------
-penguin(tweety).
+[DEFT] penguin(tweety).

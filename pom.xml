@@ -14,6 +14,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <graal.version>[1.1.2-SNAPSHOT,)</graal.version>
     <jdk.version>1.6</jdk.version>
+    <apps.mainClass>fr.lirmm.graphik.DEFT.App</apps.mainClass>
   </properties>
 
 <developers>
@@ -72,6 +73,23 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<preparationGoals>compile</preparationGoals>
+					<finalName>${project.artifactId}-${project.version}</finalName>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>${apps.mainClass}</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
