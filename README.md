@@ -12,11 +12,11 @@ Two ways to do it:
 
 2. Or, Flexible way:
 
-* clone the graal repository. (takes around 7 mins)
+* clone the graal repository.
 ~~~
 git clone git@github.com:graphik-team/graal.git
 ~~~
-* go to the graal folder and install graal
+* go to the graal folder and install graal (takes around 7 mins)
 ~~~
 mvn package install
 ~~~
@@ -46,19 +46,23 @@ nofly(X) :- penguin(X).
 %----------------- Facts --------------------
 penguin(kowalski).
 ~~~
+
 2. in your code, create a KB object using the dlgp file, and saturate the knowledge base
 ~~~
 KB kb = new KB("path/to/kowalski.dlgp");
 kb.saturate();
 ~~~
+
 3. Transform your atomic query to an atom
 ~~~
 Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(kowalski).").iterator().next();
 ~~~
+
 4. Get its entailment status
 ~~~
 int entailment = kb.EntailmentStatus(a);
-/* the KB class contains constants explaining the entailement status: NOT_ENTAILED, STRICTLY_ENTAILED, DEFEASIBLY_ENTAILED */
+/* the KB class contains constants explaining the entailement status: 
+NOT_ENTAILED, STRICTLY_ENTAILED, DEFEASIBLY_ENTAILED */
 ~~~
 ## Next Versions TODO List
 
