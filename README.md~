@@ -7,10 +7,11 @@ For more details and examples [See DEFT homepage](https://hamhec.github.io/DEFT)
 
 ## Installation
 Two ways to do it:
-1. Easy way:
-* Go to [target](https://github.com/hamhec/DEFT/tree/master/target) and download `DEFT-{version}-jar-with-dependencies.jar'. It contains all the dependencies including Graal.
+
+1. Easy way: Go to [target](https://github.com/hamhec/DEFT/tree/master/target) and download `DEFT-{version}-jar-with-dependencies.jar'. It contains all the dependencies including Graal.
 
 2. Or, Flexible way:
+
 * clone the graal repository.
 ~~~
 git clone git@github.com:graphik-team/graal.git
