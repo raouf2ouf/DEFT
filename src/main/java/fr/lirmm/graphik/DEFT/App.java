@@ -36,37 +36,25 @@ public class App
         }
         
         
-        printAnswers(kb.query("?(X) :- s(X,Y)."));
+        //printAnswers(kb.query("?(X) :- s(X,Y)."));
         
-        AtomSet atoms = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).");
-        
-        Atom a = null;
-        Argument uArg = null;
-        for(Atom atom : atoms) {
-	        LinkedList<Derivation> derivations = kb.getDerivationsFor(atom);
-	        
-	        for(Derivation d : derivations) {
-	        	System.out.println(d.toString());
-	        	uArg = new Argument(d, atom);
-	        	a = atom;
-	        }
-        }
-        
-       
-        System.out.println("---------------- Attackers for u(x) ----------------");
-        ArgumentationFramework af = kb.af;
-        LinkedList<Argument> attackers = af.getAttackersFor(uArg);
-        
-        System.out.println("There is " + attackers.size() + " attackers for " + uArg.conclusion.toString());
-        for(Argument arg : attackers) {
+        Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).").iterator();
+        if(!it.hasNext()) {
+        	System.out.println("This query has no corresponding Atom!");
+        } else {
+        	Atom a = it.next();
         	
-        	System.out.println(arg);
+        	int entailment = kb.EntailmentStatus(a);
+	        switch(entailment) {
+	        case 0: System.out.println(a + "is NOT entailed!"); break;
+	        case 1: System.out.println(a + "is Strictly entailed!"); break;
+	        case 2: System.out.println(a + "is Defeasibly entailed!"); break;
+	        }
+        	
         }
-        
-        System.out.println("---------------- Entailment for u(a) ----------------");
-        int entailment = kb.EntailmentStatus(a);
-        System.out.println(a + "is " + entailment + " entailed!");
         System.out.println( "Bye World!" );
+        
+        
     }
     
 	public static void printAnswers(Iterator<Substitution> results) throws IOException {

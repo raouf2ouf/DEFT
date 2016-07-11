@@ -118,6 +118,8 @@ public class ArgumentationFramework {
 		while(it.hasNext() && !defeated) {
 			Node defeater = it.next();
 			this.computeTree(defeater, pref);
+			// label the tree
+			this.labelTree(defeater);
 			if(defeater.getLabel() == DialecticalTree.UNDEFEATED) {
 				defeated = true;
 			}
@@ -142,7 +144,7 @@ public class ArgumentationFramework {
 	
 	private void labelTree(Node n) {
 		List<Node> children = n.getChildren();
-		if(children.isEmpty()) {
+		if(null == children || children.isEmpty()) {
 			n.setLabel(DialecticalTree.UNDEFEATED);
 			return;
 		} 
