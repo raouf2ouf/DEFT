@@ -97,6 +97,11 @@ kb.saturate();
 <pre><code>Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(kowalski).").iterator().next();
 </code></pre>
 
+<li>Set the preference function to use</li>
+
+<pre><code>kb.setPreferenceFunction(new GeneralizedSpecificityPreference());</code></pre>
+
+
 <li>Get its entailment status</li>
 
 
