@@ -23,8 +23,8 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
  */
 public class App 
 {
-    public static void main( String[] args ) throws AtomSetException, ChaseException, HomomorphismException, IOException, HomomorphismFactoryException, RuleApplicationException
-    {
+    public static void main( String[] args ) throws AtomSetException, ChaseException, HomomorphismException, 
+    IOException, HomomorphismFactoryException, RuleApplicationException {
         System.out.println( "Hello World!" );
         KB kb = new KB("./src/main/java/fly.dlgp");
         

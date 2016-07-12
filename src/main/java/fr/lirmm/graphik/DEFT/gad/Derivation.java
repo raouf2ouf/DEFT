@@ -34,10 +34,14 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 public class Derivation implements Iterable<GADEdge>{
 	private LinkedList<GADEdge> path;
+	private int numberOfDefeasibleRules = 0;
+	private int numberOfStrictRules = 0;
+	private int numberOfDefeasibleAtoms = 0;
+	private int numberOfStrictAtoms = 0;
 	
-	/* --------------------------------
-	 * Constructors
-	 * -------------------------------- */
+	// /////////////////////////////////////////////////////////////////////////
+	// CONSTRUCTORS
+	// /////////////////////////////////////////////////////////////////////////
 	public Derivation() {
 		this(new LinkedList<GADEdge>());
 	}
@@ -49,29 +53,35 @@ public class Derivation implements Iterable<GADEdge>{
 	
 	public Derivation(LinkedList<GADEdge> path) {
 		this.path = path;
+		for(GADEdge edge : path) {
+			this.updateNumbers(edge);
+		}
 	}
 	
 	public Derivation(Derivation d) {
-		this.path = new LinkedList<GADEdge>();
-		this.path.addAll(d.getPath());
+		this();
+		this.addAll(d);
 	}
 	
-	/* --------------------------------
-	 * Public Methods
-	 * -------------------------------- */
+	// /////////////////////////////////////////////////////////////////////////
+	// PUBLIC METHODS
+	// /////////////////////////////////////////////////////////////////////////
 	public void add(GADEdge edge) {
 		this.path.add(edge);
+		this.updateNumbers(edge);
 	}
 	
 	public void addAll(Derivation d) {
-		this.path.addAll(d.getPath());
+		LinkedList<GADEdge> path = d.getPath();
+		for(GADEdge edge : path) {
+			this.add(edge);
+		}
 	}
-	
+		
 	public LinkedList<GADEdge> getPath() {
 		return this.path;
 	}
-	
-	
+		
 	public boolean isConsistent(RuleSet strictRules, RuleSet negativeConstaints) 
 			throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
 		
@@ -95,7 +105,7 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 	
 	public boolean isDefeasible() {
-		boolean isDefeasible = false;
+		/*boolean isDefeasible = false;
 		
 		for(GADEdge edge : this.path) {
 			if(edge.getRule() == null) { // This is a fact
@@ -111,7 +121,9 @@ public class Derivation implements Iterable<GADEdge>{
 			}
 		}
 		
-		return isDefeasible;
+		return isDefeasible;*/
+		
+		return (this.numberOfDefeasibleAtoms > 0) || (this.numberOfDefeasibleRules > 0);
 	}
 	
 	public AtomSet getAtoms() throws AtomSetException {
@@ -149,5 +161,25 @@ public class Derivation implements Iterable<GADEdge>{
 		}
 		s.append("\n");
 		return s.toString();
+	}
+	
+	
+	// /////////////////////////////////////////////////////////////////////////
+	// PRIVATE METHODS
+	// /////////////////////////////////////////////////////////////////////////
+	private void updateNumbers(GADEdge edge) {
+		if(null == edge.getRule()) { // The atom is a starting fact
+			if(edge.getTarget() instanceof DefeasibleAtom) {
+				this.numberOfDefeasibleAtoms++;
+			} else {
+				this.numberOfStrictAtoms++;
+			}
+		} else { // The edge is a rule application
+			if(edge.getRule() instanceof DefeasibleRule) {
+				this.numberOfDefeasibleRules++;
+			} else {
+				this.numberOfStrictRules++;
+			}
+		}
 	}
 }
