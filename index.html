@@ -80,14 +80,40 @@ q(a).
 </div>
 </div>
 
+<h2><a class="anchor"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation</h2>
+<p>See <a href="https://github.com/hamhec/DEFT">github page for DEFT</a>.</p>
+
 <h2><a class="anchor"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
 <p>Documentation comming soon. In the mean while, you can download the code and take a look at the examples and work from there.</p>
+<ol>
+<li>Express your knowledge base using the DLGP format. e.g. kowalski.dlgp</li>
+<li>in your code, create a KB object using the dlgp file, and saturate the knowledge base</li>
+<pre><code>KB kb = new KB("path/to/kowalski.dlgp");
+kb.saturate();
+</code></pre>
+
+<li>Transform your atomic query to an atom</li>
+
+<pre><code>Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(kowalski).").iterator().next();
+</code></pre>
+
+<li>Get its entailment status</li>
+
+
+<pre><code>int entailment = kb.EntailmentStatus(a);
+/* the KB class contains constants explaining the entailement status:
+NOT_ENTAILED, STRICTLY_ENTAILED, DEFEASIBLY_ENTAILED */
+</code></pre>
+</ol>
+
+
 
 <h2><a class="anchor"><span aria-hidden="true" class="octicon octicon-link"></span></a>Next Versions TODO list</h2>
 <ul>
   <li>Add detailed documentation.</li>
   <li>Code restructuration.</li>
   <li>Add preference on rules.</li>
+  <li>Add support for strong negation.</li>
   <li>Add support for default negation.</li>
   <li>Add a graphical tool for dialectical tree visualisation.</li>
 </ul>
