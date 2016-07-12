@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
+import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentPreference;
 import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentationFramework;
+import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
 import fr.lirmm.graphik.DEFT.gad.Derivation;
 import fr.lirmm.graphik.DEFT.gad.GADRuleApplicationHandler;
 import fr.lirmm.graphik.DEFT.gad.GraphOfAtomDependency;
@@ -87,7 +87,7 @@ public class KB {
 
 		this.gad = new GraphOfAtomDependency();
 
-		this.af = new ArgumentationFramework(this);
+		this.af = new ArgumentationFramework(this, new GeneralizedSpecificityPreference());
 	}
 	
 	/*
@@ -111,17 +111,24 @@ public class KB {
 
 		this.initialise();
 	}
-
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	/*
+	 * Sets the preference function to use.
+	 */
+	public void setPreferenceFunction(ArgumentPreference pref) {
+		this.af.setPreferenceFunction(pref);
+	}
+	
 	/*
 	 * Initializes the GAD of the Knowledge Base, with the facts.
 	 */
 	public void initialise() {
 		this.gad.initialise(this.facts);
 	}
-
+	
 	/*
 	 * Adds an Atom to the knowledge base, if the Atom is an instance of DefeasibleAtom
 	 * it is added to defeasibleAtomSet, else it is added to strictAtomSet.

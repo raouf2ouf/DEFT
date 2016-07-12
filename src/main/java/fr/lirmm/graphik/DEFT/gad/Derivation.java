@@ -163,7 +163,24 @@ public class Derivation implements Iterable<GADEdge>{
 		return s.toString();
 	}
 	
-	
+	public int getNumberOfDefeasibleAtoms() {
+		return this.numberOfDefeasibleAtoms;
+	}
+	public int getNumberOfStrictAtoms() {
+		return this.numberOfStrictAtoms;
+	}
+	public int getNumberOfDefeasibleRules() {
+		return this.numberOfDefeasibleRules;
+	}
+	public int getNumberOfStrictRules() {
+		return this.numberOfStrictRules;
+	}
+	public int getNumberOfRules() {
+		return this.numberOfDefeasibleRules + this.numberOfStrictRules;
+	}
+	public int getNumberOfAtoms() {
+		return this.numberOfDefeasibleAtoms + this.numberOfStrictAtoms;
+	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////

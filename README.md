@@ -58,7 +58,12 @@ kb.saturate();
 Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(kowalski).").iterator().next();
 ~~~
 
-4. Get its entailment status
+4. Set the preference function to use
+~~~
+kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
+~~~
+
+5. Get its entailment status
 ~~~
 int entailment = kb.EntailmentStatus(a);
 /* the KB class contains constants explaining the entailement status: 

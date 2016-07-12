@@ -2,14 +2,10 @@ package fr.lirmm.graphik.DEFT;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import fr.lirmm.graphik.DEFT.core.KB;
-import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
-import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentationFramework;
-import fr.lirmm.graphik.DEFT.gad.Derivation;
+import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
 import fr.lirmm.graphik.graal.api.core.Atom;
-import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -35,8 +31,8 @@ public class App
         	System.out.println(atom);
         }
         
-        
-        //printAnswers(kb.query("?(X) :- s(X,Y)."));
+        // set preference function
+        kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
         
         Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).").iterator();
         if(!it.hasNext()) {

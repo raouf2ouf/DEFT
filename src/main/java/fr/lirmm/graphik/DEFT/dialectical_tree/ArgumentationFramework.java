@@ -25,11 +25,16 @@ import fr.lirmm.graphik.util.stream.GIterator;
 
 public class ArgumentationFramework {
 	public KB kb;
+	private ArgumentPreference preferenceFunction;
 	
-	public ArgumentationFramework(KB kb) {
+	public ArgumentationFramework(KB kb, ArgumentPreference pref) {
 		this.kb = kb;
+		this.preferenceFunction = pref;
 	}
 
+	public void setPreferenceFunction(ArgumentPreference pref) {
+		this.preferenceFunction = pref;
+	}
 	
 	public LinkedList<Argument> getAttackersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
 		LinkedList<Argument> attackers = new LinkedList<Argument>();
@@ -82,13 +87,13 @@ public class ArgumentationFramework {
 	}
 	
 	
-	public LinkedList<Defeater> getDefeatersFor(Argument arg, ArgumentPreference pref) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	public LinkedList<Defeater> getDefeatersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
 		LinkedList<Defeater> defeaters = new LinkedList<Defeater>();
 		
 		LinkedList<Argument> attackers = this.getAttackersFor(arg);
 		
 		for(Argument attacker : attackers) {
-			int attackStatus = pref.compare(attacker, arg);
+			int attackStatus = this.preferenceFunction.compare(attacker, arg);
 			if(attackStatus != ArgumentPreference.NOT_DEFEAT) {
 				defeaters.add(new Defeater(attacker, attackStatus));
 			}
@@ -110,14 +115,14 @@ public class ArgumentationFramework {
 		return defeated;
 	}
 	public DialecticalTree computeDialecticalTreeFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
-		ArgumentPreference pref = new ArgumentSimplePreference();
-		DialecticalTree tree = new DialecticalTree(arg, this.getDefeatersFor(arg, pref));
+		
+		DialecticalTree tree = new DialecticalTree(arg, this.getDefeatersFor(arg));
 		
 		boolean defeated = false;
 		Iterator<Node> it = tree.defeaters.iterator();
 		while(it.hasNext() && !defeated) {
 			Node defeater = it.next();
-			this.computeTree(defeater, pref);
+			this.computeTree(defeater);
 			// label the tree
 			this.labelTree(defeater);
 			if(defeater.getLabel() == DialecticalTree.UNDEFEATED) {
@@ -128,8 +133,8 @@ public class ArgumentationFramework {
 		return tree;
 	}
 	
-	private void computeTree(Node n, ArgumentPreference pref) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
-		List<Defeater> defeaters = this.getDefeatersFor(n.getData().argument, pref);
+	private void computeTree(Node n) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+		List<Defeater> defeaters = this.getDefeatersFor(n.getData().argument);
 		
 		if(defeaters.isEmpty()) {
 			return;
@@ -142,7 +147,7 @@ public class ArgumentationFramework {
 				continue;
 			} else {
 				Node child = new Node(defeater);
-				this.computeTree(child, pref);
+				this.computeTree(child);
 				n.addDefeater(child);
 			}
 		}
