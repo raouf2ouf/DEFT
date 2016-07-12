@@ -136,9 +136,15 @@ public class ArgumentationFramework {
 		}
 		
 		for(Defeater defeater: defeaters) {
-			Node child = new Node(defeater);
-			this.computeTree(child, pref);
-			n.addDefeater(child);
+			// If this node is a blocking defeater, then it cannot be defeated with another blocking defeater!
+			if(n.getData().defeatType == ArgumentPreference.BLOCKING_DEFEAT 
+					&& defeater.defeatType == ArgumentPreference.BLOCKING_DEFEAT) {
+				continue;
+			} else {
+				Node child = new Node(defeater);
+				this.computeTree(child, pref);
+				n.addDefeater(child);
+			}
 		}
 	}
 	
