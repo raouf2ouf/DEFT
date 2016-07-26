@@ -274,6 +274,7 @@ public class KB {
 	public int EntailmentStatus(Atom atom) throws AtomSetException,
 			HomomorphismException, HomomorphismFactoryException,
 			RuleApplicationException, ChaseException {
+		
 		int status = KB.NOT_ENTAILED;
 
 		LinkedList<Derivation> derivations = this.getDerivationsFor(atom);
@@ -281,6 +282,7 @@ public class KB {
 		List<Argument> arguments = new LinkedList<Argument>();
 
 		for (Derivation d : derivations) {
+			System.out.println("derivation :" + d.toString());
 			arguments.add(new Argument(d, atom));
 		}
 

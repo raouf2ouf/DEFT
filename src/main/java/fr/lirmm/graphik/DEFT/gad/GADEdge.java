@@ -68,7 +68,9 @@ public class GADEdge {
 		StringBuilder s = new StringBuilder();
 		//s.append(this.getTarget());
 		if(null != this.getSources()) {
-			s.append(" <-- ");
+			s.append(" <--");
+			s.append(this.getRule().getLabel());
+			s.append("-- ");
 			s.append("(");
 			Iterator<Atom> it = this.getSources().iterator();
 			if(it.hasNext()) {

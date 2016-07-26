@@ -34,19 +34,31 @@ public class App
         // set preference function
         kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
         
+        int entailment = KB.NOT_ENTAILED;
+        
         Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).").iterator();
-        if(!it.hasNext()) {
-        	System.out.println("This query has no corresponding Atom!");
-        } else {
+        Atom atom = null;
+        
+        while(it.hasNext()) {
         	Atom a = it.next();
-        	
-        	int entailment = kb.EntailmentStatus(a);
-	        switch(entailment) {
-	        case 0: System.out.println(a + "is NOT entailed!"); break;
-	        case 1: System.out.println(a + "is Strictly entailed!"); break;
-	        case 2: System.out.println(a + "is Defeasibly entailed!"); break;
-	        }
-        	
+        	int local_entailment = kb.EntailmentStatus(a);
+	        
+        	// 
+        	if(local_entailment == KB.STRICTLY_ENTAILED) {
+        		entailment = KB.STRICTLY_ENTAILED;
+        		atom = a;
+        	} else if(local_entailment == KB.DEFEASIBLY_ENTAILED && entailment != KB.STRICTLY_ENTAILED) {
+        		entailment = KB.DEFEASIBLY_ENTAILED;
+        		atom = a;
+        	} else if(entailment == KB.NOT_ENTAILED) {
+        		atom = a;
+        	}
+        }
+        
+        switch(entailment) {
+        case KB.NOT_ENTAILED: System.out.println(atom + "is NOT entailed!"); break;
+        case KB.STRICTLY_ENTAILED: System.out.println(atom + "is Strictly entailed!"); break;
+        case KB.DEFEASIBLY_ENTAILED: System.out.println(atom + "is Defeasibly entailed!"); break;
         }
         System.out.println( "Bye World!" );
         

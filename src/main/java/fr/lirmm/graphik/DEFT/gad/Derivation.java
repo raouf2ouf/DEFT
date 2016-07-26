@@ -126,6 +126,25 @@ public class Derivation implements Iterable<GADEdge>{
 		return (this.numberOfDefeasibleAtoms > 0) || (this.numberOfDefeasibleRules > 0);
 	}
 	
+	public HashSet<Atom> getBaseFacts() throws AtomSetException {
+		HashSet<Atom> set = new HashSet<Atom>();
+		//AtomSet store = new LinkedListAtomSet();
+		
+		for(GADEdge edge: this.path) {
+			if(null == edge.getRule()) { // The atom is a starting fact
+				set.add(edge.getTarget());
+			}
+		}
+		
+		return set;
+		/*
+		for(Atom a : set) {
+			store.add(a);
+		}
+		
+		return store; */ 
+	}
+	
 	public AtomSet getAtoms() throws AtomSetException {
 		HashSet<Atom> set = new HashSet<Atom>();
 		AtomSet store = new LinkedListAtomSet();
