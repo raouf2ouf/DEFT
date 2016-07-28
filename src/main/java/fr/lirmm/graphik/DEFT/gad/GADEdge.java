@@ -7,6 +7,15 @@ import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
 
+/**
+ * This class represents a rule application. It is an edge in the Graph Of Atom Dependency
+ * that contains references to the grounded body (source atoms), an atom in the grounded head (target atom), rule,
+ * and homomorphism used in this rule application.
+ * Note: Facts (starting atoms) have edges with empty sources, rule and homomorphism.
+ * 
+ * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
+ */
+
 public class GADEdge {
 	private Rule rule;
 	private Substitution substitution;

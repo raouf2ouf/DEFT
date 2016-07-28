@@ -4,15 +4,31 @@
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
 			by default -->
+		<Target>System.out</Target>
 		<encoder>
 			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
 			</pattern>
 		</encoder>
 	</appender>
-
+	
+	<appender name="STDINF" class="ch.qos.logback.core.ConsoleAppender">
+		<!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder 
+			by default -->
+		<Target>System.out</Target>
+		<encoder>
+			<pattern>- %msg%n 
+			</pattern>
+		</encoder>
+	</appender>
+	
+	<root level="INFO">
+		<appender-ref ref="STDINF" />
+	</root>
+	
+	<!-- 
 	<root level="warn">
 		<appender-ref ref="STDOUT" />
-	</root>
+	</root>  -->
 
 
 </configuration>

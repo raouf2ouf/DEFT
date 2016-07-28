@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.DEFT.core.DefeasibleAtom;
 import fr.lirmm.graphik.DEFT.core.DefeasibleRule;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -25,14 +28,27 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
 import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 
-
+/**
+ * This class represents the derivation sequence i.e. the sequence of rules and atoms used 
+ * to deduce a fact or a set of facts.
+ * The derivation is represented as a hypergraph that containes edges (GADEdge), each edge
+ * contains a reference to the ground body (set of source atoms), gound atom (called target) from head, 
+ * rule and homomorphism used for this rule application.
+ * 
+ * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
+ */
 public class Derivation implements Iterable<GADEdge>{
+	
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(Derivation.class);
+	
 	private LinkedList<GADEdge> path;
 	private int numberOfDefeasibleRules = 0;
 	private int numberOfStrictRules = 0;
@@ -126,6 +142,13 @@ public class Derivation implements Iterable<GADEdge>{
 		return (this.numberOfDefeasibleAtoms > 0) || (this.numberOfDefeasibleRules > 0);
 	}
 	
+	/**
+	 * Returns the set of 'starting' atoms (atoms that are not derived) also called
+	 * background knowledge used in this derivation.
+	 * 
+	 * @return HashSet<Atom> the set of facts (starting atoms)
+	 * @throws AtomSetException
+	 */
 	public HashSet<Atom> getBaseFacts() throws AtomSetException {
 		HashSet<Atom> set = new HashSet<Atom>();
 		//AtomSet store = new LinkedListAtomSet();
@@ -145,6 +168,12 @@ public class Derivation implements Iterable<GADEdge>{
 		return store; */ 
 	}
 	
+	/**
+	 * Returns the set of all atoms (given facts and generated atoms) used in this derivation.
+	 * 
+	 * @return AtomSet the set of all atoms in this derivation
+	 * @throws AtomSetException
+	 */
 	public AtomSet getAtoms() throws AtomSetException {
 		HashSet<Atom> set = new HashSet<Atom>();
 		AtomSet store = new LinkedListAtomSet();
@@ -182,27 +211,65 @@ public class Derivation implements Iterable<GADEdge>{
 		return s.toString();
 	}
 	
+	/**
+	 * Gets the number of defeasible atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfDefeasibleAtoms() {
 		return this.numberOfDefeasibleAtoms;
 	}
+	
+	/**
+	 * Gets the number of strict atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfStrictAtoms() {
 		return this.numberOfStrictAtoms;
 	}
+	
+	/**
+	 * Gets the number of defeasible atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfDefeasibleRules() {
 		return this.numberOfDefeasibleRules;
 	}
+	
+	/**
+	 * Gets the number of defeasible atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfStrictRules() {
 		return this.numberOfStrictRules;
 	}
+	
+	/**
+	 * Gets the number of defeasible atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfRules() {
 		return this.numberOfDefeasibleRules + this.numberOfStrictRules;
 	}
+	
+	/**
+	 * Gets the number of defeasible atoms used in this derivation
+	 * @return int the number of defeasible atoms
+	 */
 	public int getNumberOfAtoms() {
 		return this.numberOfDefeasibleAtoms + this.numberOfStrictAtoms;
 	}
+	
 	// /////////////////////////////////////////////////////////////////////////
 	// PRIVATE METHODS
 	// /////////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Updates the number of defeasible/strict atom/rules used in this derivation,
+	 * these numbers would allow us to detect properties of this derivation faster,
+	 * (e.g. if derivation is defeasible...etc).
+	 * 
+	 * @param edge this is the edge that will be added to the derivation sequence.
+	 */
 	private void updateNumbers(GADEdge edge) {
 		if(null == edge.getRule()) { // The atom is a starting fact
 			if(edge.getTarget() instanceof DefeasibleAtom) {

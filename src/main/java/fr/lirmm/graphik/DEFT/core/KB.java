@@ -5,6 +5,9 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
 import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentPreference;
 import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentationFramework;
@@ -43,6 +46,9 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
  * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
  */
 public class KB {
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(KB.class);
+	
 	public static final int NOT_ENTAILED = 0;
 	public static final int STRICTLY_ENTAILED = 1;
 	public static final int DEFEASIBLY_ENTAILED = 2;
@@ -56,12 +62,12 @@ public class KB {
 	public AtomSet defeasibleAtomSet;
 	public AtomSet facts;
 	
-	/*
+	/**
 	 * Graph of Atom Dependency allows us to extract all possible Derivations for atoms.
 	 */
 	public GraphOfAtomDependency gad;
 	
-	/*
+	/**
 	 * Argumentation framework to get Attackers, Defeaters, DialecticalTree...etc.
 	 */
 	public ArgumentationFramework af;
@@ -70,7 +76,7 @@ public class KB {
 	// CONSTRUCTORS
 	// /////////////////////////////////////////////////////////////////////////
 	
-	/*
+	/**
 	 * Simple constructors, creates an empty knowledge base.
 	 */
 	public KB() {
@@ -90,7 +96,7 @@ public class KB {
 		this.af = new ArgumentationFramework(this, new GeneralizedSpecificityPreference());
 	}
 	
-	/*
+	/**
 	 * Created a knowledge base from a DLGP file.
 	 */
 	public KB(String file) throws FileNotFoundException, AtomSetException {
@@ -115,7 +121,7 @@ public class KB {
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
-	/*
+	/**
 	 * Sets the preference function to use.
 	 */
 	public void setPreferenceFunction(ArgumentPreference pref) {
@@ -129,7 +135,7 @@ public class KB {
 		this.gad.initialise(this.facts);
 	}
 	
-	/*
+	/**
 	 * Adds an Atom to the knowledge base, if the Atom is an instance of DefeasibleAtom
 	 * it is added to defeasibleAtomSet, else it is added to strictAtomSet.
 	 */
@@ -147,7 +153,7 @@ public class KB {
 		}
 	}
 
-	/*
+	/**
 	 * Adds a Rule to the knowledge base, if the Rule is an instance of DefeasibleRule
 	 * it is added to defeasibleRuleSet, else it is added to strictRuleSet.
 	 */
@@ -166,7 +172,7 @@ public class KB {
 		}
 	}
 
-	/*
+	/**
 	 * Applies all rules (strict and defeasible) using a chase and adds new facts
 	 * to the facts set.
 	 */
@@ -176,7 +182,7 @@ public class KB {
 		chase.execute();
 	}
 	
-	/*
+	/**
 	 * Reverts back to the initial knowledge base, without any 'new' deduced facts.
 	 */
 	public void unsaturate() throws AtomSetException {
@@ -185,7 +191,7 @@ public class KB {
 		this.facts.addAll(this.defeasibleAtomSet);
 	}
 	
-	/*
+	/**
 	 * Query the knowledge base using a dlgp query string, e.g.: "?(X) :- p(a)."
 	 * @param queryString This is the string representing the query in dlgp format.
 	 * @return CloseableIterator<Substitution> Iterator over the possible substitutions that satisfies the query.
@@ -197,7 +203,7 @@ public class KB {
 		return this.query(query);
 	}
 	
-	/*
+	/**
 	 * Query the knowledge base using a conjunctiveQuery object.
 	 * @param query This is the conjunctiveQuery object.
 	 * @return CloseableIterator<Substitution> Iterator over the possible substitutions that satisfies the query.
@@ -215,7 +221,7 @@ public class KB {
 		return substitutions;
 	}
 	
-	/*
+	/**
 	 * Gets all the atoms that satisfy an Atomic query, it transforms the substitutions
 	 * obtained using the method query(String queryString) to actual atoms.
 	 * @param q This is the string representing the query in dlgp format.
@@ -238,7 +244,7 @@ public class KB {
 		return results;
 	}
 	
-	/*
+	/**
 	 * Gets all possible derivations for an Atom.
 	 */
 	public LinkedList<Derivation> getDerivationsFor(Atom atom)
@@ -255,7 +261,7 @@ public class KB {
 		return acceptable_derivations;
 	}
 	
-	/*
+	/**
 	 * Gets all possible derivations for an Atom expressed in dlgp string format.
 	 */
 	public LinkedList<Derivation> getDerivationsFor(String atomString)
@@ -265,7 +271,7 @@ public class KB {
 		return this.getDerivationsFor(atom);
 	}
 
-	/*
+	/**
 	 * Returns an integer representing the entailment status of an Atom. This status can either be 
 	 * not entailed (0), strictly(1) or defeasibly(2) entailed.
 	 * @param atom This is an Atom object.
@@ -282,7 +288,10 @@ public class KB {
 		List<Argument> arguments = new LinkedList<Argument>();
 
 		for (Derivation d : derivations) {
-			System.out.println("derivation :" + d.toString());
+			if(LOGGER.isInfoEnabled()) {
+				LOGGER.info("Derivation :" + d.toString());
+			}
+			
 			arguments.add(new Argument(d, atom));
 		}
 

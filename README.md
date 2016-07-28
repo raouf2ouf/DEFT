@@ -72,9 +72,7 @@ NOT_ENTAILED, STRICTLY_ENTAILED, DEFEASIBLY_ENTAILED */
 ## Next Versions TODO List
 
 - Add detailed documentation.
-- Code restructuration.
 - Add preference on rules.
-- Add support for strong negation.
 - Add support for default negation.
 - Add a graphical tool for dialectical tree visualisation.
 
