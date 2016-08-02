@@ -16,7 +16,7 @@ Two ways to do it:
 ~~~
 git clone git@github.com:graphik-team/graal.git
 ~~~
-* go to the graal folder and install graal (takes around 7 mins)
+* go to the graal folder and install graal (Tests might take up to 5 minutes)
 ~~~
 mvn package install
 ~~~

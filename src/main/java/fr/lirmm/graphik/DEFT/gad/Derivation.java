@@ -228,7 +228,7 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 	
 	/**
-	 * Gets the number of defeasible atoms used in this derivation
+	 * Gets the number of defeasible rules used in this derivation
 	 * @return int the number of defeasible atoms
 	 */
 	public int getNumberOfDefeasibleRules() {
@@ -236,7 +236,7 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 	
 	/**
-	 * Gets the number of defeasible atoms used in this derivation
+	 * Gets the number of strict rules used in this derivation
 	 * @return int the number of defeasible atoms
 	 */
 	public int getNumberOfStrictRules() {
@@ -244,7 +244,7 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 	
 	/**
-	 * Gets the number of defeasible atoms used in this derivation
+	 * Gets the number of rules (defeasible and strict) used in this derivation
 	 * @return int the number of defeasible atoms
 	 */
 	public int getNumberOfRules() {
@@ -252,7 +252,7 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 	
 	/**
-	 * Gets the number of defeasible atoms used in this derivation
+	 * Gets the number of atoms (defeasible and strict) used in this derivation
 	 * @return int the number of defeasible atoms
 	 */
 	public int getNumberOfAtoms() {

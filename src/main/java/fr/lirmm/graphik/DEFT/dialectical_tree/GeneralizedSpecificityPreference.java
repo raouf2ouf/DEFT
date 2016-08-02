@@ -6,6 +6,12 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 
+/**
+ * This class represents the Generalized Specificity Preference, which is an argument preference
+ * that 'prefers' more precise or more concise arguments.
+ * 
+ * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
+ */
 public class GeneralizedSpecificityPreference implements ArgumentPreference {
 
 	public int compare(Argument attacker, Argument attackee) {

@@ -109,7 +109,7 @@ public class KB {
 			if (o instanceof Atom) {
 				this.addAtom((Atom) o);
 			} else if (o instanceof NegativeConstraint) {
-				this.negativeConstraintSet.add((Rule) o);
+				this.addNegativeConstraint((Rule) o);
 			} else if (o instanceof Rule) {
 				this.addRule((Rule) o);
 			}
@@ -152,7 +152,16 @@ public class KB {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Adds an Atom to the knowledge base after parsing it from a String.
+	 */
+	public void addAtom(String atomString) {
+		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
+		Atom atom = DlgpDEFTParser.parseAtom(atomString);
+		this.addAtom(atom);
+	}
+	
 	/**
 	 * Adds a Rule to the knowledge base, if the Rule is an instance of DefeasibleRule
 	 * it is added to defeasibleRuleSet, else it is added to strictRuleSet.
@@ -171,7 +180,33 @@ public class KB {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Adds a Rule to the knowledge base after parsing it from a String.
+	 */
+	public void addRule(String ruleString) {
+		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
+		Rule rule = DlgpDEFTParser.parseRule(ruleString);
+		this.addRule(rule);
+	}
+	
+	/**
+	 * Adds a Negative constraint to the knowledge base.
+	 */
+	public void addNegativeConstraint(Rule nc) {
+		this.negativeConstraintSet.add(nc);
+	}
+	
+	/**
+	 * Adds a Negative constraint to the knowledge base after parsing it from a String.
+	 */
+	public void addNegativeConstraint(String ncString) {
+		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
+		Rule nc = DlgpDEFTParser.parseNegativeConstraint(ncString);
+		this.addNegativeConstraint(nc);
+	}
+	
+	
 	/**
 	 * Applies all rules (strict and defeasible) using a chase and adds new facts
 	 * to the facts set.
