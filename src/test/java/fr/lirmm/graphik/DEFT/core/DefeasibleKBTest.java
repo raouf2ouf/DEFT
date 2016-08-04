@@ -60,7 +60,9 @@ public class DefeasibleKBTest {
 		
 		kb.addAtom("p(a).");
 		kb.addAtom("[DEFT] p(a).");
-		
+		for(Atom atom : kb.strictAtomSet) {
+			System.out.println(atom);
+		}
 		assertFalse("Failure - Defeasible atom set must not be empty.", kb.defeasibleAtomSet.isEmpty());
 	}
 	

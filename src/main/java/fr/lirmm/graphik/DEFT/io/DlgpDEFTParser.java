@@ -31,7 +31,6 @@ import fr.lirmm.graphik.graal.core.FreshVarSubstitution;
 import fr.lirmm.graphik.graal.core.stream.filter.AtomFilterIterator;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 import fr.lirmm.graphik.graal.io.dlp.Directive;
-import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.DefaultURI;
 import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
@@ -47,7 +46,7 @@ import fr.lirmm.graphik.util.stream.GIterator;
  * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
  */
 public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> implements Parser<Object> {
-	private static final Logger LOGGER = LoggerFactory.getLogger(DlgpParser.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(DlgpDEFTParser.class);
 
 	private static VariableGenerator freeVarGen = new DefaultVariableGenerator("I");
 
@@ -294,23 +293,23 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static ConjunctiveQuery parseQuery(String s) {
-		return (ConjunctiveQuery) new DlgpParser(s).next();
+		return (ConjunctiveQuery) new DlgpDEFTParser(s).next();
 	}
 
 	public static Atom parseAtom(String s) {
-		return (Atom) new DlgpParser(s).next();
+		return (Atom) new DlgpDEFTParser(s).next();
 	}
 	
 	public static GIterator<Atom> parseAtomSet(String s) {
-		return new AtomFilterIterator(new DlgpParser(s));
+		return new AtomFilterIterator(new DlgpDEFTParser(s));
 	}
 	
 	public static Rule parseRule(String s) {
-		return (Rule) new DlgpParser(s).next();
+		return (Rule) new DlgpDEFTParser(s).next();
 	}
 	
 	public static DefaultNegativeConstraint parseNegativeConstraint(String s) {
-		return (DefaultNegativeConstraint) new DlgpParser(s).next();
+		return (DefaultNegativeConstraint) new DlgpDEFTParser(s).next();
 	}
 	
 	/**
@@ -321,7 +320,7 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	 * @throws AtomSetException 
 	 */
 	public static void parseKnowledgeBase(Reader src, KnowledgeBase target) throws AtomSetException {
-		DlgpParser parser = new DlgpParser(src);
+		DlgpDEFTParser parser = new DlgpDEFTParser(src);
 		while (parser.hasNext()) {
 			Object o = parser.next();
 			if (o instanceof Rule) {
