@@ -3,7 +3,9 @@ package fr.lirmm.graphik.DEFT.core;
 
 import java.io.FileNotFoundException;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -13,14 +15,18 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
  * 
  * @author Abdelraouf Hecham (INRIA) <hecham.abdelraouf@gmail.com>
  */
-public class DefeasibleKBTest extends TestCase {
+public class DefeasibleKBTest {
+	private DefeasibleKB kb1;
+	private DefeasibleKB kb2;
 	
-	public void testDefeasibleKBPoplationViaFileVSExplicitInstantiation() throws FileNotFoundException, AtomSetException, ChaseException {
+	@Before
+	public void setUp() throws FileNotFoundException, AtomSetException, ChaseException {
 		// Populating first kb via a DLGP File
-		KB kb1 = new KB("./src/test/resources/kowalski.dlgp");
+		DefeasibleKB kb1 = new DefeasibleKB("./src/test/resources/kowalski.dlgp");
 		
 		// Populating second kb explicitly
-		KB kb2 = new KB();
+		DefeasibleKB kb2 = new DefeasibleKB();
+		
 		//----------------- Rules --------------------
 		kb2.addRule("bird(X) :- penguin(X).");
 		kb2.addRule("[DEFT] fly(X) :- bird(X).");
@@ -35,7 +41,12 @@ public class DefeasibleKBTest extends TestCase {
 		// Testing if kb1 and kb2 contain the same information
 		kb1.saturate();
 		kb2.saturate();
-		// 1. Testing Strict rules
+	}
+	
+	@Test
+	public void testDefeasibleKBFileVSExplicitInstantiationStrictRules() {
+		
+		// 1. Testing Strict rules (must be the same)
 		for(Rule rule : kb1.strictRuleSet) {
 			if(!kb2.strictRuleSet.contains(rule)) {
 				// TODO Assert false;
@@ -73,19 +84,19 @@ public class DefeasibleKBTest extends TestCase {
 	}
 	
 	public void testDefeasibleKBEntailementInFileInstantiation() throws FileNotFoundException, AtomSetException {
-		KB kb = new KB("./src/test/resources/entailement.dlgp");
+		DefeasibleKB kb = new DefeasibleKB("./src/test/resources/entailement.dlgp");
 	}
 	
 	public void testDefeasibleKBEntailementInExplicitInstantiation() {
-		KB kb = new KB();
+		DefeasibleKB kb = new DefeasibleKB();
 	}
 	
 	public void testDefeasibleKBRuleOrderInFileInstantiation() throws FileNotFoundException, AtomSetException {
-		KB kb = new KB("");
+		DefeasibleKB kb = new DefeasibleKB("");
 	}
 	
 	public void testDefeasibleKBRuleOrderInExplicitInstantiation() {
-		KB kb = new KB();
+		DefeasibleKB kb = new DefeasibleKB();
 	}
 	
 	//TODO: test argumentation framework and specially in case of inconsitancy.

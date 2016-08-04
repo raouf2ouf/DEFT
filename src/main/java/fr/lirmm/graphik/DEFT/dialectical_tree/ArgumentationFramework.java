@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import fr.lirmm.graphik.DEFT.core.KB;
+import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
 import fr.lirmm.graphik.DEFT.dialectical_tree.DialecticalTree.Node;
 import fr.lirmm.graphik.DEFT.gad.Derivation;
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -24,10 +24,10 @@ import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.GIterator;
 
 public class ArgumentationFramework {
-	public KB kb;
+	public DefeasibleKB kb;
 	private ArgumentPreference preferenceFunction;
 	
-	public ArgumentationFramework(KB kb, ArgumentPreference pref) {
+	public ArgumentationFramework(DefeasibleKB kb, ArgumentPreference pref) {
 		this.kb = kb;
 		this.preferenceFunction = pref;
 	}
