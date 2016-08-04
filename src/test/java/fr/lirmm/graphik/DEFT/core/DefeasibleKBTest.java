@@ -54,15 +54,21 @@ public class DefeasibleKBTest {
 		this.kb2 = null;
 	}
 	
+	
 	@Test
 	public void testParseDefeasibleAtom() throws AtomSetException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
 		kb.addAtom("p(a).");
 		kb.addAtom("[DEFT] p(a).");
-		for(Atom atom : kb.strictAtomSet) {
+		kb.addAtom("[DEFT] p(b).");
+		/*for(Atom atom : kb.strictAtomSet) {
 			System.out.println(atom);
 		}
+		System.out.println("-----");
+		for(Atom atom : kb.defeasibleAtomSet) {
+			System.out.println(atom);
+		}*/
 		assertFalse("Failure - Defeasible atom set must not be empty.", kb.defeasibleAtomSet.isEmpty());
 	}
 	
@@ -72,6 +78,7 @@ public class DefeasibleKBTest {
 		
 		kb.addRule("p(X) :- q(X).");
 		kb.addRule("[DEFT] p(X) :- q(X).");
+		kb.addRule("[DEFT] p(X) :- s(X).");
 		
 		assertTrue("Failure - Defeasible rule set must not be empty.", kb.defeasibleRuleSet.iterator().hasNext());
 	}

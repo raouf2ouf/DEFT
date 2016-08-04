@@ -13,6 +13,7 @@ import fr.lirmm.graphik.DEFT.core.DefeasibleRule;
 import fr.lirmm.graphik.DEFT.core.StrictAtom;
 import fr.lirmm.graphik.DEFT.core.StrictRule;
 import fr.lirmm.graphik.dlgp2.parser.ParserListener;
+import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
@@ -40,7 +41,7 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 	private List<Term> answerVars;
 	private LinkedListAtomSet atomSet = null;
 	private LinkedListAtomSet atomSet2 = null;
-	private DefaultAtom atom;
+	private Atom atom;
 	private String label;
 	private boolean isDefeasible;
 	

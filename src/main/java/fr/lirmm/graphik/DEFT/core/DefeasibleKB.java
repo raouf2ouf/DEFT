@@ -159,6 +159,7 @@ public class DefeasibleKB {
 	public void addAtom(String atomString) {
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
 		Atom atom = DlgpDEFTParser.parseAtom(atomString);
+		
 		this.addAtom(atom);
 	}
 	
@@ -187,6 +188,7 @@ public class DefeasibleKB {
 	public void addRule(String ruleString) {
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
 		Rule rule = DlgpDEFTParser.parseRule(ruleString);
+	
 		this.addRule(rule);
 	}
 	
