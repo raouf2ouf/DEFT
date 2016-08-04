@@ -1,8 +1,13 @@
 package fr.lirmm.graphik.DEFT.core;
 
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.FileNotFoundException;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -22,10 +27,10 @@ public class DefeasibleKBTest {
 	@Before
 	public void setUp() throws FileNotFoundException, AtomSetException, ChaseException {
 		// Populating first kb via a DLGP File
-		DefeasibleKB kb1 = new DefeasibleKB("./src/test/resources/kowalski.dlgp");
+		this.kb1 = new DefeasibleKB("./src/test/resources/kowalski.dlgp");
 		
 		// Populating second kb explicitly
-		DefeasibleKB kb2 = new DefeasibleKB();
+		this.kb2 = new DefeasibleKB();
 		
 		//----------------- Rules --------------------
 		kb2.addRule("bird(X) :- penguin(X).");
@@ -43,46 +48,91 @@ public class DefeasibleKBTest {
 		kb2.saturate();
 	}
 	
+	@After
+	public void tearDown() {
+		this.kb1 = null;
+		this.kb2 = null;
+	}
+	
+	@Test
+	public void testParseDefeasibleAtom() throws AtomSetException {
+		DefeasibleKB kb = new DefeasibleKB();
+		
+		kb.addAtom("p(a).");
+		kb.addAtom("[DEFT] p(a).");
+		
+		assertFalse("Failure - Defeasible atom set must not be empty.", kb.defeasibleAtomSet.isEmpty());
+	}
+	
+	@Test
+	public void testParseDefeasibleRule() {
+		DefeasibleKB kb = new DefeasibleKB();
+		
+		kb.addRule("p(X) :- q(X).");
+		kb.addRule("[DEFT] p(X) :- q(X).");
+		
+		assertTrue("Failure - Defeasible rule set must not be empty.", kb.defeasibleRuleSet.iterator().hasNext());
+	}
+	
+	
 	@Test
 	public void testDefeasibleKBFileVSExplicitInstantiationStrictRules() {
-		
-		// 1. Testing Strict rules (must be the same)
+		// Testing Strict rules (must contain the same information)
 		for(Rule rule : kb1.strictRuleSet) {
 			if(!kb2.strictRuleSet.contains(rule)) {
-				// TODO Assert false;
-				break;
-			}
-		}
-		// 2. Testing Strict atoms
-		for(Atom atom : kb1.strictAtomSet) {
-			if(!kb2.strictAtomSet.contains(atom)) {
-				// TODO Assert false;
-				break;
-			}
-		}
-		// 3. Testing Defeasible rules
-		for(Rule rule : kb1.defeasibleRuleSet) {
-			if(!kb2.defeasibleRuleSet.contains(rule)) {
-				// TODO Assert false;
-				break;
-			}
-		}
-		// 4. Testing Defeasible atoms
-		for(Atom atom : kb1.defeasibleAtomSet) {
-			if(!kb2.defeasibleAtomSet.contains(atom)) {
-				// TODO Assert false;
-				break;
-			}
-		}
-		// 5. Testing the set of facts
-		for(Atom atom : kb1.facts) {
-			if(!kb2.facts.contains(atom)) {
-				// TODO Assert false;
+				fail("Failure - The set of strict rules is not the same.");
 				break;
 			}
 		}
 	}
 	
+	@Test
+	public void testDefeasibleKBFileVSExplicitInstantiationStrictAtoms() throws AtomSetException {
+		// Testing Strict atoms (must contain the same information)
+		for(Atom atom : kb1.strictAtomSet) {
+			if(!kb2.strictAtomSet.contains(atom)) {
+				fail("Failure - The set of strict atom is not the same.");
+				break;
+			}
+		}
+	}
+	
+	@Test
+	public void testDefeasibleKBFileVSExplicitInstantiationDefeasibleRules() {
+		// Testing Defeasible rules (must contain the same information)
+		for(Rule rule : kb1.defeasibleRuleSet) {
+			if(!kb2.defeasibleRuleSet.contains(rule)) {
+				System.out.println(rule);
+				fail("Failure - The set of defeasible rules is not the same.");
+				break;
+			}
+		}
+	}
+	
+	@Test
+	public void testDefeasibleKBFileVSExplicitInstantiationDefeasibleAtoms() throws AtomSetException {
+		// Testing Defeasible atoms (must contain the same information)
+		for(Atom atom : kb1.defeasibleAtomSet) {
+			System.out.println("defeasible: " + atom);
+			if(!kb2.defeasibleAtomSet.contains(atom)) {
+				fail("Failure - The set of defeasible atoms is not the same.");
+				break;
+			}
+		}
+	}
+	
+	@Test
+	public void testDefeasibleKBFileVSExplicitInstantiationFacts() throws AtomSetException {
+		// Testing the set of facts (must contain the same information)
+		for(Atom atom : kb1.facts) {
+			if(!kb2.facts.contains(atom)) {
+				fail("Failure - The set of facts is not the same.");
+				break;
+			}
+		}
+	}
+	
+	/*
 	public void testDefeasibleKBEntailementInFileInstantiation() throws FileNotFoundException, AtomSetException {
 		DefeasibleKB kb = new DefeasibleKB("./src/test/resources/entailement.dlgp");
 	}
@@ -97,7 +147,7 @@ public class DefeasibleKBTest {
 	
 	public void testDefeasibleKBRuleOrderInExplicitInstantiation() {
 		DefeasibleKB kb = new DefeasibleKB();
-	}
+	}*/
 	
 	//TODO: test argumentation framework and specially in case of inconsitancy.
 }
