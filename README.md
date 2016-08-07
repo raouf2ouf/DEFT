@@ -12,23 +12,17 @@ Two ways to do it:
 
 2. Or, Flexible way:
 
-* clone the graal repository.
-~~~
-git clone git@github.com:graphik-team/graal.git
-~~~
-* go to the graal folder and install graal (Tests might take up to 5 minutes)
-~~~
-mvn package install
-~~~
-* return to the folder containing graal and clone the DEFT repository
+* install graal as a maven dependency: [graal installation](https://github.com/graphik-team/graal).
+* Clone the DEFT repository
 ~~~
 https://github.com/hamhec/DEFT.git
 ~~~
 * go to the DEFT folder and package it
 ~~~
-mvn package
+mvn clean install
 ~~~
-* add DEFT as a maven dependency to your project and done :)
+* add DEFT as a maven dependency to your project.
+* profit :).
 
 ## Usage
 
