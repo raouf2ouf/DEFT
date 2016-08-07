@@ -11,7 +11,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <graal.version>[1.1.2-SNAPSHOT,)</graal.version>
+    <graal.version>1.1.2-SNAPSHOT</graal.version>
+    <graal.version2>[1.1.2-SNAPSHOT,)</graal.version2>
     <jdk.version>1.6</jdk.version>
     <apps.mainClass>fr.lirmm.graphik.DEFT.App</apps.mainClass>
   </properties>
@@ -38,7 +39,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.5.1</version>
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>

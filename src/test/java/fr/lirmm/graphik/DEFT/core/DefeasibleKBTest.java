@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.lirmm.graphik.graal.api.core.Atom;
@@ -54,7 +55,7 @@ public class DefeasibleKBTest {
 		this.kb2 = null;
 	}
 	
-	
+	@Ignore
 	@Test
 	public void testParseDefeasibleAtom() throws AtomSetException {
 		DefeasibleKB kb = new DefeasibleKB();

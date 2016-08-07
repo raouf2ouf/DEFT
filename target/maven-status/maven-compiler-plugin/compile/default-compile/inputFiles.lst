@@ -4,6 +4,7 @@
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/gad/GraphOfAtomDependency.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/gad/GADRuleApplicationHandler.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/ArgumentationFramework.java
+/home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/core/DefeasibleKB.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/Argument.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/core/StrictRule.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/ArgumentPreference.java
@@ -11,7 +12,6 @@
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/GeneralizedSpecificityPreference.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/App.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/gad/GADEdge.java
-/home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/core/KB.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/core/DefeasibleAtom.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/ArgumentSimplePreference.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/io/DlgpDEFTParser.java
