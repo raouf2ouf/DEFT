@@ -136,6 +136,24 @@ public class DefeasibleKB {
 	}
 	
 	/**
+	 * Parses a String and Adds the element (Atom, Rule, NegativeConstraint...).
+	 */
+	public void add(String str) {
+		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
+		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(str);
+		while (dlgpParser.hasNext()) {
+			Object o = dlgpParser.next();
+			if (o instanceof Atom) {
+				this.addAtom((Atom) o);
+			} else if (o instanceof NegativeConstraint) {
+				this.addNegativeConstraint((Rule) o);
+			} else if (o instanceof Rule) {
+				this.addRule((Rule) o);
+			}
+		}
+	}
+	
+	/**
 	 * Adds an Atom to the knowledge base, if the Atom is an instance of DefeasibleAtom
 	 * it is added to defeasibleAtomSet, else it is added to strictAtomSet.
 	 */
