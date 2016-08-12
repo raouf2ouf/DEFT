@@ -1,0 +1,168 @@
+%----------------- Test1 --------------------
+% // Strict attack (proper defeat). q1(a) should be NOT_ENTAILED
+[DEFT] q1(X) :- p1(X).
+n1(X) :- neg1(X).
+
+! :- n1(X), q1(x).
+
+p1(a).
+neg1(a).
+
+%----------------- Test2 --------------------
+% // Defeasible attack (Blocking defeat). q2(a) should be NOT_ENTAILED
+[DEFT] q2(X) :- p2(X).
+[DEFT] n2(X) :- neg2(X).
+
+! :- n2(X), q2(x).
+
+p2(a).
+neg2(a).
+
+%----------------- Test3 --------------------
+% // Defeasible attack (proper defeat). q3(a) should be NOT_ENTAILED
+[DEFT] q3(X) :- p3(X).
+[DEFT] n3(X) :- neg3(X),p3(X).
+
+! :- n3(X), q3(x).
+
+p3(a).
+neg3(a).
+
+%----------------- Test4 --------------------
+% // Defeasible attack on Strict atom. q4(a) should be STRICTLY_ENTAILED
+q4(X) :- p4(X).
+[DEFT] n4(X) :- neg4(X),p4(X).
+
+! :- n4(X), q4(x).
+
+p4(a).
+neg4(a).
+
+%----------------- Test5 --------------------
+% // Defeasible attack (proper defeat) but defended by Strict attack. q5(a) should be DEFEASIBLY_ENTAILED
+[DEFT] q5(X) :- p5(X).
+[DEFT] n5(X) :- neg5(X),p5(X).
+d5(X) :- def5(X).
+
+! :- n5(X), q5(x).
+! :- n5(X), d5(x).
+
+p5(a).
+neg5(a).
+def5(a).
+
+%----------------- Test6 --------------------
+% // Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat). q6(a) should be DEFEASIBLY_ENTAILED
+[DEFT] q6(X) :- p6(X).
+[DEFT] n6(X) :- neg6(X),p6(X).
+d6(X) :- def6(X),n6(X).
+
+! :- n6(X), q6(x).
+! :- n6(X), d6(x).
+
+p6(a).
+neg6(a).
+def6(a).
+
+%----------------- Test7 --------------------
+% // Defeasible attack (proper defeat) but defended by Defeasible attack (blocking defeat). q7(a) should be DEFEASIBLY_ENTAILED
+[DEFT] q7(X) :- p7(X).
+[DEFT] n7(X) :- neg7(X),p7(X).
+[DEFT] d7(X) :- def7(X).
+
+! :- n7(X), q7(x).
+! :- n7(X), d7(x).
+
+p7(a).
+neg7(a).
+def7(a).
+
+%----------------- Test8 --------------------
+% // Defeasible attack (blocking defeat) but defended by Defeasible attack (proper defeat). q8(a) should be DEFEASIBLY_ENTAILED
+[DEFT] q8(X) :- p8(X).
+[DEFT] n8(X) :- neg8(X).
+[DEFT] d8(X) :- def8(X),n8(X).
+
+! :- n8(X), q8(x).
+! :- n8(X), d8(x).
+
+p8(a).
+neg8(a).
+def8(a).
+
+%----------------- Test9 --------------------
+% // Defeasible attack (blocking defeat) but defended by Defeasible attack (blocking defeat). q9(a) should be NOT_ENTAILED
+[DEFT] q9(X) :- p9(X).
+[DEFT] n9(X) :- neg9(X).
+[DEFT] d9(X) :- def9(X).
+
+! :- n9(X), q9(x).
+! :- n9(X), d9(x).
+
+p9(a).
+neg9(a).
+def9(a).
+
+%----------------- Test10 --------------------
+% // Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but itself
+% // attacked by Defeasible attack (proper defeat). q10(a) should be NOT_ENTAILED
+[DEFT] q10(X) :- p10(X).
+[DEFT] n10(X) :- neg10(X), p10(X).
+[DEFT] d10(X) :- def10(X), n10(X).
+[DEFT] nn10(X) :- att10(X), def10(X).
+
+! :- n10(X), q10(x).
+! :- n10(X), d10(x).
+! :- d10(X), nn10(x).
+
+
+p10(a).
+neg10(a).
+def10(a).
+att10(a).
+
+%----------------- Test11 --------------------
+% // Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but 
+% // it is still attacked by Defeasible attack (proper defeat). q11(a) should be NOT_ENTAILED
+[DEFT] q11(X) :- p11(X).
+[DEFT] n11(X) :- neg11(X), p11(X).
+[DEFT] d11(X) :- def11(X), n11(X).
+[DEFT] nn11(X) :- att11(X), def11(X).
+
+! :- n11(X), q11(x).
+! :- n11(X), d11(x).
+! :- d11(X), nn11(x).
+
+
+p11(a).
+neg11(a).
+def11(a).
+att11(a).
+
+%----------------- Test12 --------------------
+% // Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but
+% // it is still attacked by Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat). 
+% // q12(a) should be DEFEASIBLY_ENTAILED
+[DEFT] q12(X) :- p12(X).
+[DEFT] n12(X) :- neg12(X), p12(X).
+[DEFT] d12(X) :- def12(X), n12(X).
+[DEFT] m12(X) :- meg12(X), p12(X).
+[DEFT] c12(X) :- ctt12(X), m12(X).
+
+! :- n12(X), q12(x).
+! :- n12(X), d12(x).
+! :- m12(X), q12(x).
+! :- m12(X), c12(x).
+
+
+p12(a).
+neg12(a).
+def12(a).
+meg12(a).
+ctt12(a).
+
+%----------------- Test13 --------------------
+% // Query non existant atom. q13(a) should be NOT_ENTAILED (or UNKNOWN?)
+
+%----------------- Test14 --------------------
+% // If rules' order affect entailement. q13(a) should be NOT_ENTAILED (or UNKNOWN?)
