@@ -142,11 +142,12 @@ public class DefeasibleKBTest {
 		}
 	}
 	
-	/*
-	public void testDefeasibleKBEntailementInFileInstantiation() throws FileNotFoundException, AtomSetException {
-		DefeasibleKB kb = new DefeasibleKB("./src/test/resources/entailement.dlgp");
+	@Test
+	public void testDefeasibleKBFileInstantiationEntailementTest1() throws FileNotFoundException, AtomSetException {
+		
 	}
 	
+	/*
 	public void testDefeasibleKBEntailementInExplicitInstantiation() {
 		DefeasibleKB kb = new DefeasibleKB();
 	}
