@@ -54,21 +54,6 @@ public class DefeasibleKBTest {
 		kb2.addAtom("p(a).");
 		kb2.addAtom("neg(a).");
 		/*
-		//----------------- Test2 --------------------
-		// Defeasible attack (Blocking defeat). q2(a) should be NOT_ENTAILED
-		kb2.addRule("[DEFT] q2(X) :- p2(X).");
-		kb2.addRule("[DEFT] n2(X) :- neg2(X).");
-		kb2.addNegativeConstraint("! :- n2(X), q2(x).");
-		kb2.addAtom("p2(a).");
-		kb2.addAtom("neg2(a).");
-		
-		//----------------- Test3 --------------------
-		// Defeasible attack (proper defeat). q3(a) should be NOT_ENTAILED
-		kb2.addRule("[DEFT] q3(X) :- p3(X).");
-		kb2.addRule("[DEFT] n3(X) :- neg3(X),p3(X).");
-		kb2.addNegativeConstraint("! :- n3(X), q3(x).");
-		kb2.addAtom("p3(a).");
-		kb2.addAtom("neg3(a).");
 		
 		//----------------- Test4 --------------------
 		// Defeasible attack on Strict atom. q4(a) should be STRICTLY_ENTAILED
@@ -281,9 +266,8 @@ public class DefeasibleKBTest {
 		}
 	}
 	
-	
 	@Test
-	public void testFileInstantiationEntailement_1() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException, FileNotFoundException {
+	public void testFileInstantiationEntailement() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException, FileNotFoundException {
 		//----------------- Test1 --------------------
 		// Strict attack (proper defeat). q(a) should be NOT_ENTAILED
 		String str = "[DEFT] q(X) :- p(X)." + " \n" +
@@ -311,7 +295,7 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testExplicitInstantiationEntailement_1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testExplicitInstantiationEntailement() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test1 --------------------
 		// Strict attack (proper defeat). q(a) should be NOT_ENTAILED
@@ -326,18 +310,50 @@ public class DefeasibleKBTest {
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
-		/*System.out.println("Argument: " + arg);
-		Iterator<Defeater> it = kb.af.getDefeatersFor(arg).iterator();
-		if(!it.hasNext()) System.out.println("No defeaters for " + arg);
+		int entailment = kb.EntailmentStatus(atom);
+		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
+	}
+	
+	@Test
+	public void testEntailementCase1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+		DefeasibleKB kb = new DefeasibleKB();
+		//----------------- Test2 --------------------
+		// Defeasible attack (Blocking defeat). q(a) should be NOT_ENTAILED
+		kb.addRule("[DEFT] q(X) :- p(X).");
+		kb.addRule("[DEFT] n(X) :- neg(X).");
+		kb.addNegativeConstraint("! :- n(X), q(X).");
+		kb.addAtom("p(a).");
+		kb.addAtom("neg(a).");
 		
-		while(it.hasNext()) {
-			System.out.println("Defeaters of " + atom + ": " + it.next());
-		}
-		*/
+		kb.saturate();
+		
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
+	
+	@Test
+	public void testEntailementCase2() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+		DefeasibleKB kb = new DefeasibleKB();
+		//----------------- Test3 --------------------
+		// Defeasible attack (proper defeat). q(a) should be NOT_ENTAILED
+		kb.addRule("[DEFT] q(X) :- p(X).");
+		kb.addRule("[DEFT] n(X) :- neg(X),p(X).");
+		kb.addNegativeConstraint("! :- n(X), q(X).");
+		kb.addAtom("p(a).");
+		kb.addAtom("neg(a).");
+		
+		kb.saturate();
+		
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
+		
+		int entailment = kb.EntailmentStatus(atom);
+		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
+	}
+	
 	
 	@Test
 	public void testNegativeConstraintAtomsOrder() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
@@ -388,6 +404,8 @@ public class DefeasibleKBTest {
 		assertTrue("The order of the atoms in NegativeConstraint affects the attackers!", found);
 	}
 
+	
+	// TODO test preference functions
 	
 	/*
 	public void testDefeasibleKBRuleOrderInFileInstantiation() throws FileNotFoundException, AtomSetException {

@@ -24,7 +24,7 @@ public class App
     public static void main( String[] args ) throws AtomSetException, ChaseException, HomomorphismException, 
     IOException, HomomorphismFactoryException, RuleApplicationException {
         System.out.println( "Hello World!" );
-        DefeasibleKB kb = new DefeasibleKB("./src/main/java/fly.dlgp");
+        DefeasibleKB kb = new DefeasibleKB("./src/main/resources/kowalski.dlgp");
         
         kb.saturate();
         
@@ -63,15 +63,6 @@ public class App
         case DefeasibleKB.DEFEASIBLY_ENTAILED: System.out.println(atom + "is Defeasibly entailed!"); break;
         }
         System.out.println( "Bye World!" );
-        
-        Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
-		System.out.println("Argument: " + arg);
-		Iterator<Argument> itd = kb.af.getAttackersFor(arg).iterator();
-		if(!itd.hasNext()) System.out.println("No attackers for " + arg);
-		
-		while(itd.hasNext()) {
-			System.out.println("Attackers of " + atom + ": " + itd.next());
-		}
     }
     
 	public static void printAnswers(Iterator<Substitution> results) throws IOException {

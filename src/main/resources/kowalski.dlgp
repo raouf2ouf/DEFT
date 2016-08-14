@@ -1,0 +1,12 @@
+%----------------- Rules --------------------
+bird(X) :- penguin(X).
+[DEFT] fly(X) :- bird(X).
+nofly(X) :- penguin(X).
+%[DEFT] nofly(X) :- penguin(X).
+
+
+%----------- Negative Constraints -----------
+! :- nofly(X), fly(X).
+
+%----------------- Facts --------------------
+[DEFT] penguin(tweety).
