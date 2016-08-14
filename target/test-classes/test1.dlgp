@@ -1,0 +1,9 @@
+%----------------- Test1 --------------------
+% // Strict attack (proper defeat). q(a) should be NOT_ENTAILED
+[DEFT] q(X) :- p(X).
+n(X) :- neg(X).
+
+! :- n(X), q(X).
+
+p(a).
+neg(a).

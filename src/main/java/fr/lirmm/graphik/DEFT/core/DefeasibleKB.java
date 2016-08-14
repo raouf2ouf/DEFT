@@ -97,12 +97,19 @@ public class DefeasibleKB {
 	}
 	
 	/**
-	 * Created a knowledge base from a DLGP file.
+	 * Created a knowledge base from a stored DLGP file using the file's path string.
 	 */
 	public DefeasibleKB(String file) throws FileNotFoundException, AtomSetException {
+		this(new File(file));
+	}
+	
+	/**
+	 * Created a knowledge base from a DLGP file.
+	 */
+	public DefeasibleKB(File file) throws FileNotFoundException, AtomSetException {
 		this();
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations.
-		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(new File(file));
+		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(file);
 		
 		while (dlgpParser.hasNext()) {
 			Object o = dlgpParser.next();
@@ -117,7 +124,6 @@ public class DefeasibleKB {
 
 		this.initialise();
 	}
-	
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
 	// /////////////////////////////////////////////////////////////////////////
