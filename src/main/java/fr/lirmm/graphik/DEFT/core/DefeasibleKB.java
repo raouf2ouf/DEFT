@@ -130,8 +130,6 @@ public class DefeasibleKB {
 				this.addRule((Rule) o);
 			}
 		}
-
-		this.initialise();
 	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -243,10 +241,22 @@ public class DefeasibleKB {
 	
 	
 	/**
-	 * Applies all rules (strict and defeasible) using a chase and adds new facts
+	 * Cleans the KB then applies all rules (strict and defeasible) using a chase and adds new facts
 	 * to the facts set.
+	 * @throws ChaseException, AtomSetException 
 	 */
-	public void saturate() throws ChaseException {
+	public void saturate() throws ChaseException, AtomSetException {
+		this.unsaturate();
+		this.initialise();
+		this.saturateWithoutCleaning();
+	}
+	
+	/**
+	 * Applies all rules (strict and defeasible) using a chase and adds new facts
+	 * to the facts set without prior cleaning of previously deduced facts.
+	 * @throws ChaseException 
+	 */
+	public void saturateWithoutCleaning() throws ChaseException {
 		Chase chase = new NaiveChase(this.rules, this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();

@@ -21,9 +21,10 @@
 		</encoder>
 	</appender>
 	
+	<!-- 
 	<root level="INFO">
 		<appender-ref ref="STDINF" />
-	</root>
+	</root> -->
 	
 	<!-- 
 	<root level="warn">

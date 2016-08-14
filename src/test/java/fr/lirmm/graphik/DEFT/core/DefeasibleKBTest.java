@@ -17,6 +17,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
+import fr.lirmm.graphik.DEFT.dialectical_tree.Defeater;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -297,6 +298,14 @@ public class DefeasibleKBTest {
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
+		System.out.println("Argument: " + arg);
+		Iterator<Defeater> it = kb.af.getDefeatersFor(arg).iterator();
+		if(!it.hasNext()) System.out.println("No defeaters for " + arg);
+		
+		while(it.hasNext()) {
+			System.out.println("Defeaters of " + atom + ": " + it.next());
+		}
+		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("File: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
@@ -314,19 +323,17 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		for(Atom a : kb.facts) {
-			System.out.println(a);
-		}
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
-		System.out.println("Argument: " + arg);
-		Iterator<Argument> it = kb.af.getAttackersFor(arg).iterator();
-		if(!it.hasNext()) System.out.println("No attackers for " + arg);
+		
+		/*System.out.println("Argument: " + arg);
+		Iterator<Defeater> it = kb.af.getDefeatersFor(arg).iterator();
+		if(!it.hasNext()) System.out.println("No defeaters for " + arg);
 		
 		while(it.hasNext()) {
-			System.out.println("Attackers of " + atom + ": " + it.next());
+			System.out.println("Defeaters of " + atom + ": " + it.next());
 		}
-		
+		*/
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -369,10 +376,8 @@ public class DefeasibleKBTest {
 		boolean found = true;
 		while(it1.hasNext() && found) {
 			Argument att1 = it1.next();
-			System.out.println(att1);
 			found = false;
 			for(Argument att2 : attackers2) {
-				System.out.println(att2);
 				if(att1.toString().equals(att2.toString())) {
 					found = true;
 					
