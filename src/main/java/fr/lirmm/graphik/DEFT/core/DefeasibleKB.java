@@ -2,6 +2,8 @@ package fr.lirmm.graphik.DEFT.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -107,9 +109,16 @@ public class DefeasibleKB {
 	 * Created a knowledge base from a DLGP file.
 	 */
 	public DefeasibleKB(File file) throws FileNotFoundException, AtomSetException {
+		this(new FileReader(file));
+	}
+	
+	/**
+	 * Created a knowledge base from a DLGP file.
+	 */
+	public DefeasibleKB(Reader reader) throws FileNotFoundException, AtomSetException {
 		this();
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations.
-		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(file);
+		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(reader);
 		
 		while (dlgpParser.hasNext()) {
 			Object o = dlgpParser.next();
