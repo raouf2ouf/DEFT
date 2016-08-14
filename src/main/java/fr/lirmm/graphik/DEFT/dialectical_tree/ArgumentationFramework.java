@@ -42,27 +42,44 @@ public class ArgumentationFramework {
 		
 		for(Rule r : kb.negativeConstraintSet) {
 			GIterator<Atom> ncIt = r.getBody().iterator();
-			// We suppose that the first atom of the negative constraint is used in the support, so the second atom is an attacker
-			Atom supportAtom = ncIt.next();
-			Atom attackerAtom = ncIt.next();
+			Atom supportAtom = null;
+			Atom attackerAtom = null;
 			
+			// We make sure that the NC contains exactly two atoms!
+			// and we suppose that the first atom of the negative constraint is used in the support, so the second atom is an attacker.
+			if(ncIt.hasNext()) { supportAtom = ncIt.next(); }
+			else { throw new AtomSetException("Negative Constraint does not contain any atom!"); }
+			if(ncIt.hasNext()) { attackerAtom = ncIt.next(); }
+			else { throw new AtomSetException("Negative Constraint only contains one atom (must contain 2 atoms)!"); }
+			if(ncIt.hasNext()) { throw new AtomSetException("Negative Constraint contains more than 2 atoms!"); }
 			
-			// Test if the first Atom of the NC is contained in the support
+			// Test if the first Atom of the NC can be mapped to an atom (or atoms) in the support of the argument.
+			
+			// Note: DefaultConjunctiveQuery only accepts a set, so we put the atom in a set 'atomSettified'
 			InMemoryAtomSet atomSettified = new DefaultInMemoryGraphAtomSet();
 			atomSettified.add(supportAtom);			
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(atomSettified);
 			
 			CloseableIterator<Substitution> substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
 			
-			if(!substitutions.hasNext()) {
-				// Test if the second Atom of the NC is contained in the support
+			if(!substitutions.hasNext()) { // the first NC atom cannot be mapped to atoms in the support of the argument.
+				// Test if the second Atom of the NC can be mapped to the support.
+				// we 'switch' the variables (the second atom is now the supporting one) 
 				Atom tmp = attackerAtom;
 				attackerAtom = supportAtom;
-				supportAtom = attackerAtom;
+				supportAtom = tmp;
 				query = new DefaultConjunctiveQuery(atomSettified);
 				
 				substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
+				
+				if(!substitutions.hasNext()) { // this NC does not affect the argument because both 
+					// its atoms cannot be mapped to atoms in the support of the argument.
+					continue;
+				}
 			}
+			
+			
+			// TODO: what if the atom in NC can be mapped to different atoms in the support? do the test for this case.
 			
 			while(substitutions.hasNext()) {
 				Substitution sub = substitutions.next();

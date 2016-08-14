@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
+import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
+import fr.lirmm.graphik.DEFT.dialectical_tree.Defeater;
 import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
@@ -62,7 +64,14 @@ public class App
         }
         System.out.println( "Bye World!" );
         
-        
+        Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
+		System.out.println("Argument: " + arg);
+		Iterator<Argument> itd = kb.af.getAttackersFor(arg).iterator();
+		if(!itd.hasNext()) System.out.println("No attackers for " + arg);
+		
+		while(itd.hasNext()) {
+			System.out.println("Attackers of " + atom + ": " + itd.next());
+		}
     }
     
 	public static void printAnswers(Iterator<Substitution> results) throws IOException {

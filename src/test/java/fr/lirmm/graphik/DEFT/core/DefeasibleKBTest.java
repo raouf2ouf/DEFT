@@ -1,21 +1,28 @@
 package fr.lirmm.graphik.DEFT.core;
 
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
+import fr.lirmm.graphik.DEFT.dialectical_tree.Defeater;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
+import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 
 /**
  * 
@@ -28,7 +35,9 @@ public class DefeasibleKBTest {
 	@Before
 	public void setUp() throws FileNotFoundException, AtomSetException, ChaseException {
 		// Populating first kb via a DLGP File
-		this.kb1 = new DefeasibleKB("./src/test/resources/entailment.dlgp");
+		//this.kb1 = new DefeasibleKB("./src/test/resources/entailment.dlgp");
+		
+		this.kb1 = new DefeasibleKB("./src/test/resources/t1.dlgp");
 		
 		// Populating second kb explicitly
 		this.kb2 = new DefeasibleKB();
@@ -37,10 +46,10 @@ public class DefeasibleKBTest {
 		// Strict attack (proper defeat). q1(a) should be NOT_ENTAILED
 		kb2.addRule("[DEFT] q1(X) :- p1(X).");
 		kb2.addRule("n1(X) :- neg1(X).");
-		kb2.addNegativeConstraint("! :- n1(X), q1(x).");
+		kb2.addNegativeConstraint("! :- n1(X), q1(X).");
 		kb2.addAtom("p1(a).");
 		kb2.addAtom("neg1(a).");
-		
+		/*
 		//----------------- Test2 --------------------
 		// Defeasible attack (Blocking defeat). q2(a) should be NOT_ENTAILED
 		kb2.addRule("[DEFT] q2(X) :- p2(X).");
@@ -167,10 +176,10 @@ public class DefeasibleKBTest {
 		kb2.addAtom("neg12(a).");
 		kb2.addAtom("def12(a).");
 		kb2.addAtom("meg12(a).");
-		kb2.addAtom("ctt12(a).");
+		kb2.addAtom("ctt12(a).");*/
 		
 		
-		// Testing if kb1 and kb2 contain the same information
+		// Saturate both KB
 		kb1.saturate();
 		kb2.saturate();
 	}
@@ -268,10 +277,61 @@ public class DefeasibleKBTest {
 		}
 	}
 	
+	/*
 	@Test
-	public void testDefeasibleKBFileInstantiationEntailementTest1() {
+	public void testDefeasibleKBFileInstantiationEntailementTest1() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+		for(Atom a : kb1.facts) {
+			System.out.println(a);
+		}
 		
+		Atom atom = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q1(a).").iterator().next();
+		Argument arg = kb1.af.getArgumentsFor(atom).iterator().next();
+		System.out.println("Argument: " + arg);
+		Iterator<Argument> it = kb1.af.getAttackersFor(arg).iterator();
+		if(!it.hasNext()) System.out.println("No Attackers for " + arg);
+		
+		while(it.hasNext()) {
+			System.out.println("Attackers of " + atom + ": " + it.next());
+		}
+		
+		System.out.println(kb1.negativeConstraintSet.iterator().next());
+		
+		int entailment = kb1.EntailmentStatus(atom);
+		assertEquals("File: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
+	}*/
+	
+	@Test
+	public void testDefeasibleKBExplicitInstantiationEntailementTest1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+		DefeasibleKB kb = new DefeasibleKB();
+		//----------------- Test1 --------------------
+		// Strict attack (proper defeat). q1(a) should be NOT_ENTAILED
+		kb.addRule("[DEFT] q(X) :- p(X).");
+		kb.addRule("n(X) :- neg(X).");
+		kb.addNegativeConstraint("! :- q(X), n(X).");
+		kb.addAtom("p(a).");
+		kb.addAtom("neg(a).");
+		
+		kb.saturateWithNegativeConstraint();
+		
+		for(Atom a : kb.facts) {
+			System.out.println(a);
+		}
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
+		System.out.println("Argument: " + arg);
+		Iterator<Argument> it = kb.af.getAttackersFor(arg).iterator();
+		if(!it.hasNext()) System.out.println("No attackers for " + arg);
+		
+		while(it.hasNext()) {
+			System.out.println("Attackers of " + atom + ": " + it.next());
+		}
+		
+		
+		int entailment = kb.EntailmentStatus(atom);
+		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
+	
+	// negative constraint atoms order
 	
 	/*
 	public void testDefeasibleKBRuleOrderInFileInstantiation() throws FileNotFoundException, AtomSetException {

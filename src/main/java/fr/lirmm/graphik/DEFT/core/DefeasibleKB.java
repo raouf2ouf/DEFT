@@ -238,6 +238,20 @@ public class DefeasibleKB {
 	}
 	
 	/**
+	 * Applies all rules (strict and defeasible) along with all NegativeConstraints using a chase and adds new facts
+	 * to the facts set.
+	 */
+	public void saturateWithNegativeConstraint() throws ChaseException {
+		RuleSet rulesWithNc = new LinkedListRuleSet();
+		rulesWithNc.addAll(this.rules.iterator());
+		rulesWithNc.addAll(this.negativeConstraintSet.iterator());
+		
+		Chase chase = new NaiveChase(rulesWithNc, this.facts,
+				new GADRuleApplicationHandler(this.gad).getRuleApplier());
+		chase.execute();
+	}
+	
+	/**
 	 * Reverts back to the initial knowledge base, without any 'new' deduced facts.
 	 */
 	public void unsaturate() throws AtomSetException {
