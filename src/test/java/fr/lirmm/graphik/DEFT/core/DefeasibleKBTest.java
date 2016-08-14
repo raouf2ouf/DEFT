@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,7 +16,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
-import fr.lirmm.graphik.DEFT.dialectical_tree.Defeater;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -298,7 +298,7 @@ public class DefeasibleKBTest {
 		
 		int entailment = kb1.EntailmentStatus(atom);
 		assertEquals("File: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
-	}*/
+	}
 	
 	@Test
 	public void testDefeasibleKBExplicitInstantiationEntailementTest1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
@@ -329,6 +329,57 @@ public class DefeasibleKBTest {
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
+	}*/
+	
+	@Test
+	public void testNegativeConstraintAtomsOrder() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+		DefeasibleKB kb1 = new DefeasibleKB();
+		DefeasibleKB kb2 = new DefeasibleKB();
+		
+		// kb1 and kb2 contain the same information, except the negative constraint atoms are in different order.
+		kb1.addRule("[DEFT] q(X) :- p(X).");
+		kb1.addRule("n(X) :- neg(X).");
+		kb1.addAtom("p(a).");
+		kb1.addAtom("neg(a).");
+		
+		kb2.addRule("[DEFT] q(X) :- p(X).");
+		kb2.addRule("n(X) :- neg(X).");
+		kb2.addAtom("p(a).");
+		kb2.addAtom("neg(a).");
+		
+		kb1.addNegativeConstraint("! :- q(X), n(X).");
+		kb2.addNegativeConstraint("! :- n(X), q(X).");
+		
+		kb1.saturate();
+		kb2.saturate();
+		
+		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Argument arg = kb1.af.getArgumentsFor(atom1).iterator().next();
+		
+		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Argument arg2 = kb2.af.getArgumentsFor(atom2).iterator().next();
+		
+		LinkedList<Argument> attackers1 = kb1.af.getAttackersFor(arg);
+		LinkedList<Argument> attackers2 = kb2.af.getAttackersFor(arg2);
+		
+		Iterator<Argument> it1 = attackers1.iterator();
+		
+		// Testing if both give the same attackers
+		boolean found = true;
+		while(it1.hasNext() && found) {
+			Argument att1 = it1.next();
+			System.out.println(att1);
+			found = false;
+			for(Argument att2 : attackers2) {
+				System.out.println(att2);
+				if(att1.toString().equals(att2.toString())) {
+					found = true;
+					
+					break;
+				}
+			}
+		}
+		assertTrue("The order of the atoms in NegativeConstraint affects the attackers!", found);
 	}
 	
 	// negative constraint atoms order

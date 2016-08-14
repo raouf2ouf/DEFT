@@ -68,6 +68,10 @@ public class ArgumentationFramework {
 				Atom tmp = attackerAtom;
 				attackerAtom = supportAtom;
 				supportAtom = tmp;
+				
+				atomSettified = new DefaultInMemoryGraphAtomSet();
+				atomSettified.add(supportAtom);
+				
 				query = new DefaultConjunctiveQuery(atomSettified);
 				
 				substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
