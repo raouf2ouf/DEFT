@@ -193,7 +193,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -213,7 +212,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -233,7 +231,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -253,7 +250,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be strictly entailed.", DefeasibleKB.STRICTLY_ENTAILED, entailment);
@@ -510,16 +506,41 @@ public class DefeasibleKBTest {
 	
 	
 	@Test
-	public void testRuleOrderInFileInstantiation() throws FileNotFoundException, AtomSetException {
-		DefeasibleKB kb = new DefeasibleKB();
+	public void testRulesOrder() throws FileNotFoundException, AtomSetException, ChaseException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException {
+		// u(a) should be NOT_ENTAILED.
 		
+		DefeasibleKB kb1 = new DefeasibleKB();
+		
+		kb1.addRule("s(X,Y) :- p(X).");
+		kb1.addRule("[DEFT] s(X,Y), t(Y) :- q(X).");
+		kb1.addRule("[DEFT] u(X) :- r(X), q(X).");
+		kb1.addNegativeConstraint("! :- u(X), s(X,Y).");
+		kb1.addAtom("p(a).");
+		kb1.addAtom("q(a).");
+		kb1.addAtom("[DEFT] r(a).");
+		
+		DefeasibleKB kb2 = new DefeasibleKB();
+		
+		kb2.addRule("[DEFT] s(X,Y), t(Y) :- q(X).");
+		kb2.addRule("s(X,Y) :- p(X).");
+		kb2.addRule("[DEFT] u(X) :- r(X), q(X).");
+		kb2.addNegativeConstraint("! :- u(X), s(X,Y).");
+		kb2.addAtom("p(a).");
+		kb2.addAtom("q(a).");
+		kb2.addAtom("[DEFT] r(a).");
+		
+		kb1.saturate();
+		kb2.saturate();
+		
+		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		int entailment1 = kb1.EntailmentStatus(atom1);
+		
+		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		int entailment2 = kb1.EntailmentStatus(atom2);
+		
+		assertEquals("Entailment of " + atom1 + " must be the same.", entailment1, entailment2);
 		
 	}
-	
-	/*
-	public void testRuleOrderInExplicitInstantiation() {
-		DefeasibleKB kb = new DefeasibleKB();
-	}*/
 	
 	//TODO: test argumentation framework and specially in case of inconsitancy.
 }
