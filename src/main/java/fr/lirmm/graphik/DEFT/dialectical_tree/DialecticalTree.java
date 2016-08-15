@@ -64,6 +64,7 @@ public class DialecticalTree {
         }
         
         public void addDefeater(Node n) {
+        	if(null == this.children) this.children = new LinkedList<Node>();
         	this.children.add(n);
         	n.parent = this;
         }

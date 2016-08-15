@@ -371,7 +371,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
