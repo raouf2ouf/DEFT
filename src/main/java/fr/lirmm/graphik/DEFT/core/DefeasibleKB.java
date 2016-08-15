@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -401,5 +402,13 @@ public class DefeasibleKB {
 			}
 		}
 		return status;
+	}
+	
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		for(Atom atom : this.facts) {
+			s.append(atom + "\n");
+		}
+		return s.toString();
 	}
 }

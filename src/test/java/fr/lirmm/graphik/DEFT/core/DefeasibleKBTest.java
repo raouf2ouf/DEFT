@@ -256,7 +256,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.STRICTLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be strictly entailed.", DefeasibleKB.STRICTLY_ENTAILED, entailment);
 	}
 	
 	@Test
@@ -279,7 +279,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
@@ -298,11 +298,13 @@ public class DefeasibleKBTest {
 				
 		kb.saturate();
 		
+		System.out.println(kb.toString());
+		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
@@ -325,7 +327,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
@@ -348,7 +350,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
@@ -456,7 +458,7 @@ public class DefeasibleKBTest {
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
-		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
+		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	
