@@ -404,6 +404,9 @@ public class DefeasibleKB {
 		return status;
 	}
 	
+	/**
+	 * Displays the facts of this Knowledge base as a string.
+	 */
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		for(Atom atom : this.facts) {

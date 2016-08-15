@@ -276,8 +276,7 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
-		
+	
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
@@ -289,19 +288,16 @@ public class DefeasibleKBTest {
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat). q(a) should be DEFEASIBLY_ENTAILED
 		kb.addRule("[DEFT] q(X) :- p(X).");
 		kb.addRule("[DEFT] n(X) :- neg(X),p(X).");
-		kb.addRule("d(X) :- def(X),n(X).");
-		kb.addNegativeConstraint("! :- n(X), q(X).");
+		kb.addRule("d(X) :- def(X),neg(X),p(X).");
 		kb.addNegativeConstraint("! :- n(X), d(X).");
+		kb.addNegativeConstraint("! :- n(X), q(X).");
 		kb.addAtom("p(a).");
 		kb.addAtom("neg(a).");
 		kb.addAtom("def(a).");
 				
 		kb.saturate();
 		
-		System.out.println(kb.toString());
-		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
@@ -324,7 +320,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
@@ -337,7 +332,7 @@ public class DefeasibleKBTest {
 		// Defeasible attack (blocking defeat) but defended by Defeasible attack (proper defeat). q(a) should be DEFEASIBLY_ENTAILED
 		kb.addRule("[DEFT] q(X) :- p(X).");
 		kb.addRule("[DEFT] n(X) :- neg(X).");
-		kb.addRule("[DEFT] d(X) :- def(X),n(X).");
+		kb.addRule("[DEFT] d(X) :- def(X),neg(X).");
 		kb.addNegativeConstraint("! :- n(X), q(X).");
 		kb.addNegativeConstraint("! :- n(X), d(X).");
 		kb.addAtom("p(a).");
@@ -347,7 +342,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
@@ -370,7 +364,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -384,8 +377,8 @@ public class DefeasibleKBTest {
 		// attacked by Defeasible attack (proper defeat). q(a) should be NOT_ENTAILED
 		kb.addRule("[DEFT] q(X) :- p(X).");
 		kb.addRule("[DEFT] n(X) :- neg(X), p(X).");
-		kb.addRule("[DEFT] d(X) :- def(X), n(X).");
-		kb.addRule("[DEFT] nn(X) :- att(X), def(X).");
+		kb.addRule("[DEFT] d(X) :- def(X), neg(X), p(X).");
+		kb.addRule("[DEFT] nn(X) :- att(X), def(X), neg(X), p(X).");
 		kb.addNegativeConstraint("! :- n(X), q(X).");
 		kb.addNegativeConstraint("! :- n(X), d(X).");
 		kb.addNegativeConstraint("! :- d(X), nn(X).");
@@ -397,7 +390,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -411,8 +403,8 @@ public class DefeasibleKBTest {
 		// it is still attacked by Defeasible attack (proper defeat). q(a) should be NOT_ENTAILED
 		kb.addRule("[DEFT] q(X) :- p(X).");
 		kb.addRule("[DEFT] n(X) :- neg(X), p(X).");
-		kb.addRule("[DEFT] d(X) :- def(X), n(X).");
-		kb.addRule("[DEFT] nn(X) :- att(X), def(X).");
+		kb.addRule("[DEFT] d(X) :- def(X), neg(X), p(X).");
+		kb.addRule("[DEFT] nn(X) :- att(X), def(X), neg(X), p(X).");
 		kb.addNegativeConstraint("! :- n(X), q(X).");
 		kb.addNegativeConstraint("! :- n(X), d(X).");
 		kb.addNegativeConstraint("! :- d(X), nn(X).");
@@ -424,7 +416,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
@@ -439,9 +430,9 @@ public class DefeasibleKBTest {
 		// q(a) should be DEFEASIBLY_ENTAILED
 		kb.addRule("[DEFT] q(X) :- p(X).");
 		kb.addRule("[DEFT] n(X) :- neg(X), p(X).");
-		kb.addRule("[DEFT] d(X) :- def(X), n(X).");
+		kb.addRule("[DEFT] d(X) :- def(X), neg(X), p(X).");
 		kb.addRule("[DEFT] m(X) :- meg(X), p(X).");
-		kb.addRule("[DEFT] c(X) :- ctt(X), m(X).");
+		kb.addRule("[DEFT] c(X) :- ctt(X), meg(X), p(X).");
 		kb.addNegativeConstraint("! :- n(X), q(X).");
 		kb.addNegativeConstraint("! :- n(X), d(X).");
 		kb.addNegativeConstraint("! :- m(X), q(X).");
@@ -455,7 +446,6 @@ public class DefeasibleKBTest {
 		kb.saturate();
 		
 		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
-		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);

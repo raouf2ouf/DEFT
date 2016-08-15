@@ -207,7 +207,7 @@ public class Derivation implements Iterable<GADEdge>{
 		for(GADEdge edge : this.path) {
 			s.append(edge);
 		}
-		s.append("\n");
+		//s.append("\n");
 		return s.toString();
 	}
 	

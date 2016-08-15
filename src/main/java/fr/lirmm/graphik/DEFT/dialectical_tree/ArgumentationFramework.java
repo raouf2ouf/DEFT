@@ -135,6 +135,7 @@ public class ArgumentationFramework {
 		
 		return defeated;
 	}
+	
 	public DialecticalTree computeDialecticalTreeFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
 		
 		DialecticalTree tree = new DialecticalTree(arg, this.getDefeatersFor(arg));

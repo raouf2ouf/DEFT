@@ -1,5 +1,6 @@
 package fr.lirmm.graphik.DEFT.dialectical_tree;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -77,6 +78,35 @@ public class DialecticalTree {
         	return this.label;
         }
         
+        /**
+    	 * Displays the sub dialectical tree strating from this Node as a string.
+    	 */
+        public String toString(String str) {
+        	StringBuilder s = new StringBuilder();
+        	s.append(str);
+        	s.append(" <- ");
+        	s.append(this.data.argument.toString());
+        	if(null != this.children) {
+        		for(Node child : this.children) {
+        			s.append(child.toString(s.toString()));
+        			s.append("\n");
+        		}
+        	}
+        	
+        	return s.toString();
+        }
     }
     
+    /**
+	 * Displays the dialectical tree as a string.
+	 */
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		
+		for(Node defeater : this.defeaters) {
+			s.append(defeater.toString(this.root.toString()));
+		}
+		
+		return s.toString();
+	}
 }
