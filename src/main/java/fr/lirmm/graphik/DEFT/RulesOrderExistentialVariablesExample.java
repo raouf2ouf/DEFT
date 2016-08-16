@@ -22,7 +22,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 public class RulesOrderExistentialVariablesExample {
 	public static void main( String[] args ) throws AtomSetException, ChaseException, HomomorphismException, 
     IOException, HomomorphismFactoryException, RuleApplicationException {
-DefeasibleKB kb1 = new DefeasibleKB();
+		DefeasibleKB kb1 = new DefeasibleKB();
 		
 		kb1.addRule("s(X,Y) :- p(X).");
 		kb1.addRule("[DEFT] s(X,Y), t(Y) :- q(X).");

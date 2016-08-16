@@ -22,28 +22,42 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 public class QueryWithExistentialVariableExample {
 	public static void main( String[] args ) throws AtomSetException, ChaseException, HomomorphismException, 
     IOException, HomomorphismFactoryException, RuleApplicationException {
-        System.out.println( "Hello World!" );
-        DefeasibleKB kb = new DefeasibleKB("./src/main/resources/kowalski.dlgp");
         
+		DefeasibleKB kb = new DefeasibleKB();
+		
+		kb.addRule("s(X,Y) :- p(X).");
+		kb.addRule("[DEFT] s(X,Y), t(Y) :- q(X).");
+		kb.addRule("[DEFT] u(X) :- r(X), q(X).");
+		kb.addNegativeConstraint("! :- u(X), s(X,Y).");
+		kb.addAtom("p(a).");
+		kb.addAtom("q(a).");
+		kb.addAtom("[DEFT] r(a).");
+		
         kb.saturate();
         
         System.out.println("---------------- Saturated Atoms ----------------");
-        System.out.println(kb.toString());
+        System.out.print(kb.toString());
+        System.out.println("-------------------------------------------------\n");
         
         // set preference function
         kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
         
-        // Our query might not be a fully ground atomic query, it might contain existential variables!
+        // The query might not be a fully ground atomic query, it might contain existential variables!
+        // e.g. "?(X) :- s(a, X)."
         int entailment = DefeasibleKB.NOT_ENTAILED;
         
-        Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).").iterator();
+        // Find all the atoms that can be mapped to the query, and for each atom test its entailment
+        // The final answer for the query is the strongest entailment of the mapped atoms. 
+        Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- s(a,X).").iterator();
         Atom atom = null;
         
         while(it.hasNext()) {
         	Atom a = it.next();
         	int local_entailment = kb.EntailmentStatus(a);
 	        
-        	// 
+        	System.out.println(a + " is " + printEntailment(local_entailment));
+        	
+        	// Test if the entailment of this atom is stronger that the pervious atoms.
         	if(local_entailment == DefeasibleKB.STRICTLY_ENTAILED) {
         		entailment = DefeasibleKB.STRICTLY_ENTAILED;
         		atom = a;
@@ -55,11 +69,15 @@ public class QueryWithExistentialVariableExample {
         	}
         }
         
-        switch(entailment) {
-        case DefeasibleKB.NOT_ENTAILED: System.out.println(atom + "is NOT entailed!"); break;
-        case DefeasibleKB.STRICTLY_ENTAILED: System.out.println(atom + "is Strictly entailed!"); break;
-        case DefeasibleKB.DEFEASIBLY_ENTAILED: System.out.println(atom + "is Defeasibly entailed!"); break;
-        }
-        System.out.println( "Bye World!" );
+        System.out.println("Thus, The query s(a,X) is : " + printEntailment(entailment) );
     }
+	
+	public static String printEntailment(int entailment) {
+		switch(entailment) {
+        case DefeasibleKB.NOT_ENTAILED: return (" NOT entailed!");
+        case DefeasibleKB.STRICTLY_ENTAILED: return(" Strictly entailed!");
+        case DefeasibleKB.DEFEASIBLY_ENTAILED: return(" Defeasibly entailed!");
+		}
+		return "";
+	}
 }
