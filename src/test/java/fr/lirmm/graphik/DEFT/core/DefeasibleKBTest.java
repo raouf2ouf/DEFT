@@ -153,7 +153,7 @@ public class DefeasibleKBTest {
 	
 	@Test
 	public void testFileInstantiationEntailement() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException, FileNotFoundException {
-		//----------------- Test1 --------------------
+		//----------------- Test0 --------------------
 		// Strict attack (proper defeat). q(a) should be NOT_ENTAILED
 		String str = "[DEFT] q(X) :- p(X)." + " \n" +
 					"n(X) :- neg(X)." + " \n" +
