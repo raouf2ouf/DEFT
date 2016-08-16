@@ -3,7 +3,7 @@
 
   <groupId>fr.lirmm.graphik</groupId>
   <artifactId>DEFT</artifactId>
-  <version>0.7.1-SNAPSHOT</version>
+  <version>0.7.1</version>
   <packaging>jar</packaging>
 
   <name>DEFT</name>
@@ -31,7 +31,7 @@
 		<url>https://github.com/hamhec/DEFT.git</url>
 		<connection>scm:git:https://github.com/hamhec/DEFT.git</connection>
 		<developerConnection>scm:git:https://github.com/hamhec/DEFT.git</developerConnection>
-		<tag>HEAD</tag>
+		<tag>DEFT-0.7.1</tag>
 	</scm>
 	
 
