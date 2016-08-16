@@ -7,4 +7,4 @@ nofly(X) :- penguin(X).
 ! :- nofly(X), fly(X).
 
 %----------------- Facts --------------------
-[DEFT] penguin(tweety).
+[DEFT] penguin(kowalski).

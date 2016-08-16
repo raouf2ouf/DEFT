@@ -28,7 +28,7 @@ public class DifferentInstantiationsExample {
 				"%----------- Negative Constraints -----------" + "\n" +
 				"! :- nofly(X), fly(X)." + "\n" +
 				"%----------------- Facts --------------------" + "\n" +
-				"[DEFT] penguin(tweety).";
+				"[DEFT] penguin(kowalski).";
 		
 		DefeasibleKB kbString = new DefeasibleKB(new StringReader(str));
 		
@@ -39,7 +39,7 @@ public class DifferentInstantiationsExample {
 		kbExplicit.addRule("[DEFT] fly(X) :- bird(X).");
 		kbExplicit.addRule("nofly(X) :- penguin(X).");
 		kbExplicit.addNegativeConstraint("! :- nofly(X), fly(X).");
-		kbExplicit.addAtom("[DEFT] penguin(tweety).");
+		kbExplicit.addAtom("[DEFT] penguin(kowalski).");
 		
 		// 4. A combination of different methods:
 		String str2 = "bird(X) :- penguin(X)." + "\n" +
@@ -49,7 +49,7 @@ public class DifferentInstantiationsExample {
 		
 		kbCombined.addRule("nofly(X) :- penguin(X).");
 		kbCombined.addNegativeConstraint("! :- nofly(X), fly(X).");
-		kbCombined.addAtom("[DEFT] penguin(tweety).");
+		kbCombined.addAtom("[DEFT] penguin(kowalski).");
 		
 		// Staturating the Knowledge bases
 		kbFile.saturate();

@@ -29,13 +29,12 @@ public class App
         kb.saturate();
         
         System.out.println("---------------- Saturated Atoms ----------------");
-        for(Atom atom : kb.facts) {
-        	System.out.println(atom);
-        }
+        System.out.println(kb.toString());
         
         // set preference function
         kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
         
+        // Our query might not be a fully ground atomic query, it might contain existential variables!
         int entailment = DefeasibleKB.NOT_ENTAILED;
         
         Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(tweety).").iterator();
