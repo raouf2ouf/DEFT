@@ -158,7 +158,7 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 	private boolean isDefeasible(String label) {
 		boolean isDefeasible = false;
 		label = label.toLowerCase();
-		Pattern pattern = Pattern.compile("[deft]");
+		Pattern pattern = Pattern.compile("deft");
 		Matcher matcher = pattern.matcher(label);
 		if (matcher.find()) {
 		    isDefeasible = true;

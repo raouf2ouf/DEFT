@@ -28,8 +28,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.ChaseWithGRD;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
@@ -104,7 +103,7 @@ public class Derivation implements Iterable<GADEdge>{
 		AtomSet store = this.getAtoms();
 		
 		// Apply the rules and saturate the set of facts
-		Chase chase = new NaiveChase(strictRules, store, new RestrictedChaseStopCondition());
+		Chase chase = new DefaultChase(strictRules, store, new RestrictedChaseStopCondition());
 		chase.execute();
 		
 		RuleApplier<Rule, AtomSet> ruler = new DefaultRuleApplier<AtomSet>();

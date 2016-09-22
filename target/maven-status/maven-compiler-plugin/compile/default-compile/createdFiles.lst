@@ -16,6 +16,7 @@ fr/lirmm/graphik/DEFT/dialectical_tree/ArgumentPreference.class
 fr/lirmm/graphik/DEFT/io/DlgpDEFTParser.class
 fr/lirmm/graphik/DEFT/gad/Derivation.class
 fr/lirmm/graphik/DEFT/io/DlgpDEFTParser$Producer.class
+fr/lirmm/graphik/DEFT/Test.class
 fr/lirmm/graphik/DEFT/gad/GADRuleApplicationHandler.class
 fr/lirmm/graphik/DEFT/core/DefeasibleAtom.class
 fr/lirmm/graphik/DEFT/DifferentInstantiationsExample.class

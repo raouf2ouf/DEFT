@@ -37,7 +37,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.NaiveChase;
+import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -258,7 +258,7 @@ public class DefeasibleKB {
 	 * @throws ChaseException 
 	 */
 	public void saturateWithoutCleaning() throws ChaseException {
-		Chase chase = new NaiveChase(this.rules, this.facts,
+		Chase chase = new DefaultChase(this.rules, this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}
@@ -272,7 +272,7 @@ public class DefeasibleKB {
 		rulesWithNc.addAll(this.rules.iterator());
 		rulesWithNc.addAll(this.negativeConstraintSet.iterator());
 		
-		Chase chase = new NaiveChase(rulesWithNc, this.facts,
+		Chase chase = new DefaultChase(rulesWithNc, this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}

@@ -70,8 +70,8 @@ public class DefeasibleKBTest {
 	public void testParseDefeasibleAtom() throws AtomSetException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
-		kb.addAtom("p(a).");
-		kb.addAtom("[DEFT] p(a).");
+		//kb.addAtom("p(a).");
+		//kb.addAtom("[DEFT] p(a).");
 		kb.addAtom("[DEFT] p(b).");
 		/*for(Atom atom : kb.strictAtomSet) {
 			System.out.println(atom);

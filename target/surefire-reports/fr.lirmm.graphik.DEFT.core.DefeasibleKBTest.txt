@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: fr.lirmm.graphik.DEFT.core.DefeasibleKBTest
--------------------------------------------------------------------------------
-Tests run: 22, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.709 sec

@@ -22,6 +22,7 @@ import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.KnowledgeBase;
 import fr.lirmm.graphik.graal.api.core.Rule;
+import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.core.VariableGenerator;
 import fr.lirmm.graphik.graal.api.io.ParseError;
 import fr.lirmm.graphik.graal.api.io.Parser;
@@ -65,7 +66,10 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		protected void createAtomSet(InMemoryAtomSet atomset) {
 			FreshVarSubstitution s = new FreshVarSubstitution(freeVarGen);
 			for (Atom a : atomset) {
-				this.set.write(s.createImageOf(a));
+				int i = 0;
+				for (Term term : a.getTerms())
+					a.setTerm(i, s.createImageOf(term));
+				this.set.write(a);
 			}
 		}
 
