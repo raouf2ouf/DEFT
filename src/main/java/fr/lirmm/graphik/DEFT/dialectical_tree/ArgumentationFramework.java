@@ -21,7 +21,8 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class ArgumentationFramework {
 	public DefeasibleKB kb;
@@ -36,12 +37,12 @@ public class ArgumentationFramework {
 		this.preferenceFunction = pref;
 	}
 	
-	public LinkedList<Argument> getAttackersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	public LinkedList<Argument> getAttackersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
 		LinkedList<Argument> attackers = new LinkedList<Argument>();
 		AtomSet supportAtoms = arg.support.getAtoms();
 		
 		for(Rule r : kb.negativeConstraintSet) {
-			GIterator<Atom> ncIt = r.getBody().iterator();
+			CloseableIteratorWithoutException<Atom> ncIt = r.getBody().iterator();
 			Atom supportAtom = null;
 			Atom attackerAtom = null;
 			
@@ -108,7 +109,7 @@ public class ArgumentationFramework {
 	}
 	
 	
-	public LinkedList<Defeater> getDefeatersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	public LinkedList<Defeater> getDefeatersFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
 		LinkedList<Defeater> defeaters = new LinkedList<Defeater>();
 		
 		LinkedList<Argument> attackers = this.getAttackersFor(arg);
@@ -123,7 +124,7 @@ public class ArgumentationFramework {
 		return defeaters;
 	}
 	
-	public boolean isDefeated(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	public boolean isDefeated(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
 		DialecticalTree tree = computeDialecticalTreeFor(arg);
 		boolean defeated = false;
 		for(Node defeater : tree.defeaters) {
@@ -136,7 +137,7 @@ public class ArgumentationFramework {
 		return defeated;
 	}
 	
-	public DialecticalTree computeDialecticalTreeFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	public DialecticalTree computeDialecticalTreeFor(Argument arg) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
 		
 		DialecticalTree tree = new DialecticalTree(arg, this.getDefeatersFor(arg));
 		
@@ -155,7 +156,7 @@ public class ArgumentationFramework {
 		return tree;
 	}
 	
-	private void computeTree(Node n) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException {
+	private void computeTree(Node n) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
 		List<Defeater> defeaters = this.getDefeatersFor(n.getData().argument);
 		
 		if(defeaters.isEmpty()) {
@@ -200,7 +201,7 @@ public class ArgumentationFramework {
 	}
 	
 	
-	public LinkedList<Argument> getArgumentsFor(Atom atom) throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public LinkedList<Argument> getArgumentsFor(Atom atom) throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		LinkedList<Argument> arguments = new LinkedList<Argument>();
 		LinkedList<Derivation> derivations = this.kb.getDerivationsFor(atom);
 		

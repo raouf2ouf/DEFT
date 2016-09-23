@@ -37,8 +37,8 @@ import fr.lirmm.graphik.util.Prefix;
 import fr.lirmm.graphik.util.URI;
 import fr.lirmm.graphik.util.stream.AbstractCloseableIterator;
 import fr.lirmm.graphik.util.stream.ArrayBlockingStream;
-import fr.lirmm.graphik.util.stream.GIterator;
-
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 
 /**
  * This parser is Exactly the same as DlgpParser except it uses 
@@ -65,10 +65,14 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		@Override
 		protected void createAtomSet(InMemoryAtomSet atomset) {
 			FreshVarSubstitution s = new FreshVarSubstitution(freeVarGen);
-			for (Atom a : atomset) {
+			CloseableIteratorWithoutException<Atom> it = atomset.iterator();
+			while (it.hasNext()) {
+				Atom a = it.next();
 				int i = 0;
-				for (Term term : a.getTerms())
+				for (Term term : a.getTerms()) {
 					a.setTerm(i, s.createImageOf(term));
+					i++;
+				}
 				this.set.write(a);
 			}
 		}
@@ -304,7 +308,7 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		return (Atom) new DlgpDEFTParser(s).next();
 	}
 	
-	public static GIterator<Atom> parseAtomSet(String s) {
+	public static CloseableIterator<Atom> parseAtomSet(String s) {
 		return new AtomFilterIterator(new DlgpDEFTParser(s));
 	}
 	

@@ -56,10 +56,10 @@ public class RulesOrderExistentialVariablesExample {
         
         // the entailment of q(a) should be the same in both KBs and not be affected by Existential Variables.
         // since our query is an atomic fully grounded query, there can only be one atom matching it.
-        Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+        Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		int entailment1 = kb1.EntailmentStatus(atom1);
 		
-		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		int entailment2 = kb1.EntailmentStatus(atom2);
 		
 		System.out.println("The entailment of q(a) should be the same in both KBs: ");

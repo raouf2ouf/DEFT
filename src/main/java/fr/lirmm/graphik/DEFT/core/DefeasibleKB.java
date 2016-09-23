@@ -37,10 +37,12 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
+import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This class represents the Knowledge Base, it contains strict and defeasible
@@ -145,7 +147,7 @@ public class DefeasibleKB {
 	/*
 	 * Initializes the GAD of the Knowledge Base, with the facts.
 	 */
-	public void initialise() {
+	public void initialise() throws IteratorException {
 		this.gad.initialise(this.facts);
 	}
 	
@@ -245,8 +247,9 @@ public class DefeasibleKB {
 	 * Cleans the KB then applies all rules (strict and defeasible) using a chase and adds new facts
 	 * to the facts set.
 	 * @throws ChaseException, AtomSetException 
+	 * @throws IteratorException 
 	 */
-	public void saturate() throws ChaseException, AtomSetException {
+	public void saturate() throws ChaseException, AtomSetException, IteratorException {
 		this.unsaturate();
 		this.initialise();
 		this.saturateWithoutCleaning();
@@ -258,7 +261,7 @@ public class DefeasibleKB {
 	 * @throws ChaseException 
 	 */
 	public void saturateWithoutCleaning() throws ChaseException {
-		Chase chase = new DefaultChase(this.rules, this.facts,
+		Chase chase = new ConfigurableChase(this.rules, this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}
@@ -272,7 +275,7 @@ public class DefeasibleKB {
 		rulesWithNc.addAll(this.rules.iterator());
 		rulesWithNc.addAll(this.negativeConstraintSet.iterator());
 		
-		Chase chase = new DefaultChase(rulesWithNc, this.facts,
+		Chase chase = new ConfigurableChase(rulesWithNc, this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}
@@ -287,7 +290,7 @@ public class DefeasibleKB {
 	}
 	
 	/**
-	 * Query the knowledge base using a dlgp query string, e.g.: "?(X) :- p(a)."
+	 * Query the knowledge base using a dlgp query string, e.g.: "? :- p(a)."
 	 * @param queryString This is the string representing the query in dlgp format.
 	 * @return CloseableIterator<Substitution> Iterator over the possible substitutions that satisfies the query.
 	 * @exception HomomorphismException .
@@ -322,9 +325,10 @@ public class DefeasibleKB {
 	 * @param q This is the string representing the query in dlgp format.
 	 * @return AtomSet The sets of atoms that satisfy the query.
 	 * @exception HomomorphismException
+	 * @throws IteratorException 
 	 */
 	public AtomSet getAtomsSatisfiyingAtomicQuery(String q)
-			throws HomomorphismException {
+			throws HomomorphismException, IteratorException {
 		ConjunctiveQuery query = DlgpParser.parseQuery(q);
 
 		InMemoryAtomSet results = new DefaultInMemoryGraphAtomSet();
@@ -341,10 +345,11 @@ public class DefeasibleKB {
 	
 	/**
 	 * Gets all possible derivations for an Atom.
+	 * @throws IteratorException 
 	 */
 	public LinkedList<Derivation> getDerivationsFor(Atom atom)
 			throws HomomorphismException, HomomorphismFactoryException,
-			RuleApplicationException, AtomSetException, ChaseException {
+			RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		LinkedList<Derivation> derivations = this.gad.getDerivations(atom);
 		LinkedList<Derivation> acceptable_derivations = new LinkedList<Derivation>();
 
@@ -358,10 +363,11 @@ public class DefeasibleKB {
 	
 	/**
 	 * Gets all possible derivations for an Atom expressed in dlgp string format.
+	 * @throws IteratorException 
 	 */
 	public LinkedList<Derivation> getDerivationsFor(String atomString)
 			throws HomomorphismException, HomomorphismFactoryException,
-			RuleApplicationException, AtomSetException, ChaseException {
+			RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		Atom atom = DlgpParser.parseAtom(atomString);
 		return this.getDerivationsFor(atom);
 	}
@@ -371,10 +377,11 @@ public class DefeasibleKB {
 	 * not entailed (0), strictly(1) or defeasibly(2) entailed.
 	 * @param atom This is an Atom object.
 	 * @return int Representing entailement status.
+	 * @throws IteratorException 
 	 */
 	public int EntailmentStatus(Atom atom) throws AtomSetException,
 			HomomorphismException, HomomorphismFactoryException,
-			RuleApplicationException, ChaseException {
+			RuleApplicationException, ChaseException, IteratorException {
 		
 		int status = DefeasibleKB.NOT_ENTAILED;
 
@@ -409,8 +416,14 @@ public class DefeasibleKB {
 	 */
 	public String toString() {
 		StringBuilder s = new StringBuilder();
-		for(Atom atom : this.facts) {
-			s.append(atom + "\n");
+		CloseableIterator<Atom> it = this.facts.iterator();
+		try {
+			while(it.hasNext()) {
+				Atom atom = it.next();
+				s.append(atom + "\n");
+			}
+		} catch (IteratorException e) {
+			return "Exception: " + e.getMessage();
 		}
 		return s.toString();
 	}

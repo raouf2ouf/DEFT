@@ -39,7 +39,7 @@ public class KowalskiExample {
         
         // Can Kowalski fly?
         // since our query is an atomic fully grounded query, there can only be one atom matching it.
-        Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- fly(kowalski).").iterator().next();
+        Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- fly(kowalski).").iterator().next();
         
     	int entailment = kb.EntailmentStatus(atom);
         
@@ -51,7 +51,7 @@ public class KowalskiExample {
         
         // Can Kowalski fly?
         // since our query is an atomic fully grounded query, there can only be one atom matching it.
-        Atom atom2 = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- nofly(kowalski).").iterator().next();
+        Atom atom2 = kb.getAtomsSatisfiyingAtomicQuery("? :- nofly(kowalski).").iterator().next();
         
     	int entailment2 = kb.EntailmentStatus(atom2);
         

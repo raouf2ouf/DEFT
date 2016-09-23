@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
@@ -25,6 +24,8 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * 
@@ -35,7 +36,7 @@ public class DefeasibleKBTest {
 	private DefeasibleKB kb2;
 	
 	@Before
-	public void setUp() throws FileNotFoundException, AtomSetException, ChaseException {
+	public void setUp() throws FileNotFoundException, AtomSetException, ChaseException, IteratorException {
 		// Populating first kb via a `mocked` DLGP File
 		String str = "[DEFT] q(X) :- p(X). \n" +
 		"n(X) :- neg(X). \n" +
@@ -65,13 +66,12 @@ public class DefeasibleKBTest {
 		this.kb2 = null;
 	}
 	
-	@Ignore
 	@Test
 	public void testParseDefeasibleAtom() throws AtomSetException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
-		//kb.addAtom("p(a).");
-		//kb.addAtom("[DEFT] p(a).");
+		kb.addAtom("p(a).");
+		kb.addAtom("[DEFT] p(a).");
 		kb.addAtom("[DEFT] p(b).");
 		/*for(Atom atom : kb.strictAtomSet) {
 			System.out.println(atom);
@@ -97,8 +97,19 @@ public class DefeasibleKBTest {
 	@Test
 	public void testFileVSExplicitInstantiationStrictRules() {
 		// Testing Strict rules (must contain the same information)
-		for(Rule rule : kb1.strictRuleSet) {
-			if(!kb2.strictRuleSet.contains(rule)) {
+		Iterator<Rule> it1 = kb1.strictRuleSet.iterator();
+		
+		while(it1.hasNext()) {
+			Rule rule = it1.next();
+			boolean exists = false;
+			Iterator<Rule> it2 = kb2.strictRuleSet.iterator();
+			while(it2.hasNext() && !exists) {
+				Rule rule2 = it2.next();
+				if(rule.toString().equals(rule2.toString())) {
+					exists = true;
+				}
+			}
+			if(!exists) {
 				fail("Failure - The set of strict rules is not the same.");
 				break;
 			}
@@ -106,9 +117,11 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testFileVSExplicitInstantiationStrictAtoms() throws AtomSetException {
+	public void testFileVSExplicitInstantiationStrictAtoms() throws AtomSetException, IteratorException {
 		// Testing Strict atoms (must contain the same information)
-		for(Atom atom : kb1.strictAtomSet) {
+		CloseableIterator<Atom> it = kb1.strictAtomSet.iterator();
+		while(it.hasNext()) {
+			Atom atom = it.next();
 			if(!kb2.strictAtomSet.contains(atom)) {
 				fail("Failure - The set of strict atom is not the same.");
 				break;
@@ -119,9 +132,19 @@ public class DefeasibleKBTest {
 	@Test
 	public void testFileVSExplicitInstantiationDefeasibleRules() {
 		// Testing Defeasible rules (must contain the same information)
-		for(Rule rule : kb1.defeasibleRuleSet) {
-			if(!kb2.defeasibleRuleSet.contains(rule)) {
-				System.out.println(rule);
+		Iterator<Rule> it1 = kb1.defeasibleRuleSet.iterator();
+		
+		while(it1.hasNext()) {
+			Rule rule = it1.next();
+			boolean exists = false;
+			Iterator<Rule> it2 = kb2.defeasibleRuleSet.iterator();
+			while(it2.hasNext() && !exists) {
+				Rule rule2 = it2.next();
+				if(rule.toString().equals(rule2.toString())) {
+					exists = true;
+				}
+			}
+			if(!exists) {
 				fail("Failure - The set of defeasible rules is not the same.");
 				break;
 			}
@@ -129,9 +152,11 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testFileVSExplicitInstantiationDefeasibleAtoms() throws AtomSetException {
+	public void testFileVSExplicitInstantiationDefeasibleAtoms() throws AtomSetException, IteratorException {
 		// Testing Defeasible atoms (must contain the same information)
-		for(Atom atom : kb1.defeasibleAtomSet) {
+		CloseableIterator<Atom> it = kb1.defeasibleAtomSet.iterator();
+		while(it.hasNext()) {
+			Atom atom = it.next();
 			System.out.println("defeasible: " + atom);
 			if(!kb2.defeasibleAtomSet.contains(atom)) {
 				fail("Failure - The set of defeasible atoms is not the same.");
@@ -141,9 +166,11 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testFileVSExplicitInstantiationFacts() throws AtomSetException {
+	public void testFileVSExplicitInstantiationFacts() throws AtomSetException, IteratorException {
 		// Testing the set of facts (must contain the same information)
-		for(Atom atom : kb1.facts) {
+		CloseableIterator<Atom> it = kb1.facts.iterator();
+		while(it.hasNext()) {
+			Atom atom = it.next();
 			if(!kb2.facts.contains(atom)) {
 				fail("Failure - The set of facts is not the same.");
 				break;
@@ -152,7 +179,7 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testFileInstantiationEntailement() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException, FileNotFoundException {
+	public void testFileInstantiationEntailement() throws HomomorphismException, AtomSetException, HomomorphismFactoryException, RuleApplicationException, ChaseException, FileNotFoundException, IteratorException {
 		//----------------- Test0 --------------------
 		// Strict attack (proper defeat). q(a) should be NOT_ENTAILED
 		String str = "[DEFT] q(X) :- p(X)." + " \n" +
@@ -164,7 +191,7 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		Argument arg = kb.af.getArgumentsFor(atom).iterator().next();
 		
 		System.out.println("Argument: " + arg);
@@ -180,7 +207,7 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testExplicitInstantiationEntailement() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testExplicitInstantiationEntailement() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test1 --------------------
 		// Strict attack (proper defeat). q(a) should be NOT_ENTAILED
@@ -192,14 +219,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase1() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test1 --------------------
 		// Defeasible attack (Blocking defeat). q(a) should be NOT_ENTAILED
@@ -211,14 +238,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase2() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase2() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test2 --------------------
 		// Defeasible attack (proper defeat). q(a) should be NOT_ENTAILED
@@ -230,14 +257,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase3() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase3() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test3 --------------------
 		// Defeasible attack on Strict atom. q(a) should be STRICTLY_ENTAILED
@@ -249,14 +276,14 @@ public class DefeasibleKBTest {
 				
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be strictly entailed.", DefeasibleKB.STRICTLY_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase4() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase4() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test4 --------------------
 		// Defeasible attack (proper defeat) but defended by Strict attack. q(a) should be DEFEASIBLY_ENTAILED
@@ -271,14 +298,14 @@ public class DefeasibleKBTest {
 				
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 	
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase5() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase5() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test5 --------------------
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat). q(a) should be DEFEASIBLY_ENTAILED
@@ -293,14 +320,14 @@ public class DefeasibleKBTest {
 				
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase6() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase6() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test6 --------------------
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (blocking defeat). q(a) should be DEFEASIBLY_ENTAILED
@@ -315,14 +342,14 @@ public class DefeasibleKBTest {
 				
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase7() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase7() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test7 --------------------
 		// Defeasible attack (blocking defeat) but defended by Defeasible attack (proper defeat). q(a) should be DEFEASIBLY_ENTAILED
@@ -337,14 +364,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase8() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase8() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test8 --------------------
 		// Defeasible attack (blocking defeat) but defended by Defeasible attack (blocking defeat). q(a) should be NOT_ENTAILED
@@ -359,14 +386,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase9() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase9() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test9 --------------------
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but itself
@@ -385,14 +412,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase10() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase10() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test10 --------------------
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but 
@@ -411,14 +438,14 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must Not be entailed.", DefeasibleKB.NOT_ENTAILED, entailment);
 	}
 	
 	@Test
-	public void testEntailementCase11() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testEntailementCase11() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		//----------------- Test11 --------------------
 		// Defeasible attack (proper defeat) but defended by Defeasible attack (proper defeat) but
@@ -441,7 +468,7 @@ public class DefeasibleKBTest {
 		
 		kb.saturate();
 		
-		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom = kb.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		
 		int entailment = kb.EntailmentStatus(atom);
 		assertEquals("Explicit: " + atom + " must be defeasibly entailed.", DefeasibleKB.DEFEASIBLY_ENTAILED, entailment);
@@ -449,7 +476,7 @@ public class DefeasibleKBTest {
 	
 	
 	@Test
-	public void testNegativeConstraintAtomsOrder() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+	public void testNegativeConstraintAtomsOrder() throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		DefeasibleKB kb1 = new DefeasibleKB();
 		DefeasibleKB kb2 = new DefeasibleKB();
 		
@@ -470,10 +497,10 @@ public class DefeasibleKBTest {
 		kb1.saturate();
 		kb2.saturate();
 		
-		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		Argument arg = kb1.af.getArgumentsFor(atom1).iterator().next();
 		
-		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		Argument arg2 = kb2.af.getArgumentsFor(atom2).iterator().next();
 		
 		LinkedList<Argument> attackers1 = kb1.af.getAttackersFor(arg);
@@ -506,7 +533,7 @@ public class DefeasibleKBTest {
 	
 	
 	@Test
-	public void testRulesOrder() throws FileNotFoundException, AtomSetException, ChaseException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException {
+	public void testRulesOrder() throws FileNotFoundException, AtomSetException, ChaseException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, IteratorException {
 		// u(a) should be NOT_ENTAILED.
 		
 		DefeasibleKB kb1 = new DefeasibleKB();
@@ -532,10 +559,10 @@ public class DefeasibleKBTest {
 		kb1.saturate();
 		kb2.saturate();
 		
-		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom1 = kb1.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		int entailment1 = kb1.EntailmentStatus(atom1);
 		
-		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("?(X) :- q(a).").iterator().next();
+		Atom atom2 = kb2.getAtomsSatisfiyingAtomicQuery("? :- q(a).").iterator().next();
 		int entailment2 = kb1.EntailmentStatus(atom2);
 		
 		assertEquals("Entailment of " + atom1 + " must be the same.", entailment1, entailment2);

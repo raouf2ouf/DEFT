@@ -6,6 +6,8 @@ import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
 import fr.lirmm.graphik.graal.api.core.Substitution;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This class represents a rule application. It is an edge in the Graph Of Atom Dependency
@@ -81,18 +83,24 @@ public class GADEdge {
 			s.append(this.getRule().getLabel());
 			s.append("-- ");
 			s.append("(");
-			Iterator<Atom> it = this.getSources().iterator();
-			if(it.hasNext()) {
-				Atom a = it.next();
-				s.append(a.getPredicate().getIdentifier());
-				s.append(a.getTerms());
-			}
+			CloseableIterator<Atom> it = this.getSources().iterator();
+			try {
+				if(it.hasNext()) {
+					Atom a = it.next();
+					s.append(a.getPredicate().getIdentifier());
+					s.append(a.getTerms());
+				}
 			
-			while(it.hasNext()) {
-				s.append(" , ");
-				Atom a = it.next();
-				s.append(a.getPredicate().getIdentifier());
-				s.append(a.getTerms());
+			
+				while(it.hasNext()) {
+					s.append(" , ");
+					Atom a = it.next();
+					s.append(a.getPredicate().getIdentifier());
+					s.append(a.getTerms());
+				}
+			} catch (IteratorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		s.append(")");

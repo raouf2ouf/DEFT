@@ -28,11 +28,13 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
+import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
 import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * This class represents the derivation sequence i.e. the sequence of rules and atoms used 
@@ -98,12 +100,12 @@ public class Derivation implements Iterable<GADEdge>{
 	}
 		
 	public boolean isConsistent(RuleSet strictRules, RuleSet negativeConstaints) 
-			throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException {
+			throws HomomorphismException, HomomorphismFactoryException, RuleApplicationException, AtomSetException, ChaseException, IteratorException {
 		
 		AtomSet store = this.getAtoms();
 		
 		// Apply the rules and saturate the set of facts
-		Chase chase = new DefaultChase(strictRules, store, new RestrictedChaseStopCondition());
+		Chase chase = new ConfigurableChase(strictRules, store, new RestrictedChaseStopCondition());
 		chase.execute();
 		
 		RuleApplier<Rule, AtomSet> ruler = new DefaultRuleApplier<AtomSet>();
@@ -172,14 +174,17 @@ public class Derivation implements Iterable<GADEdge>{
 	 * 
 	 * @return AtomSet the set of all atoms in this derivation
 	 * @throws AtomSetException
+	 * @throws IteratorException 
 	 */
-	public AtomSet getAtoms() throws AtomSetException {
+	public AtomSet getAtoms() throws AtomSetException, IteratorException {
 		HashSet<Atom> set = new HashSet<Atom>();
 		AtomSet store = new LinkedListAtomSet();
 		
 		for(GADEdge edge: this.path) {
 			if(edge.getSources() != null) {
-				for(Atom a : edge.getSources()) {
+				CloseableIterator<Atom> it = edge.getSources().iterator();
+				while(it.hasNext()) {
+					Atom a = it.next();
 					set.add(a);
 				}
 			}

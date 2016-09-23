@@ -6,6 +6,7 @@ import java.io.StringReader;
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 /**
  * A defeasible knowledge base can be instantiated in different ways:
@@ -16,7 +17,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
  */
 public class DifferentInstantiationsExample {
 	
-	public static void main( String[] args ) throws FileNotFoundException, AtomSetException, ChaseException {
+	public static void main( String[] args ) throws FileNotFoundException, AtomSetException, ChaseException, IteratorException {
 		// 1. Instantiating a KB from a DLGP file:
 		DefeasibleKB kbFile = new DefeasibleKB("./src/main/resources/kowalski.dlgp");
 		

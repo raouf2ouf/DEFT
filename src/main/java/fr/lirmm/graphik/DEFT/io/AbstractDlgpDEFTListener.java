@@ -24,7 +24,7 @@ import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.DefaultNegativeConstraint;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
 import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
-import fr.lirmm.graphik.graal.core.factory.RuleFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultRuleFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
 
 
@@ -121,7 +121,7 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 				this.atomSet2 = this.atomSet;
 				this.atomSet = new LinkedListAtomSet();
 			} else {
-				Rule rule = RuleFactory.instance().create(this.label, this.atomSet,this.atomSet2);
+				Rule rule = DefaultRuleFactory.instance().create(this.label, this.atomSet,this.atomSet2);
 				rule = (this.isDefeasible) ? new DefeasibleRule(rule) : new StrictRule(rule);
 				this.createRule(rule);
 			}

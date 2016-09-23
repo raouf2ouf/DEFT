@@ -11,6 +11,7 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
 
 /**
  * The Kowalski examples uses atomic ground query, but DEFT can deal with atomic queries that contain existential variables (not fully ground queries) 
@@ -48,7 +49,7 @@ public class QueryWithExistentialVariableExample {
         
         // Find all the atoms that can be mapped to the query, and for each atom test its entailment
         // The final answer for the query is the strongest entailment of the mapped atoms. 
-        Iterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- s(a,X).").iterator();
+        CloseableIterator<Atom> it = kb.getAtomsSatisfiyingAtomicQuery("?(X) :- s(a,X).").iterator();
         Atom atom = null;
         
         while(it.hasNext()) {

@@ -10,7 +10,10 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
 import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
-import fr.lirmm.graphik.util.stream.GIterator;
+import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
+import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class GADRuleApplicationHandler implements RuleApplicationHandler{
 	
@@ -30,11 +33,16 @@ public class GADRuleApplicationHandler implements RuleApplicationHandler{
 		return true;
 	}
 
-	public GIterator<Atom> postRuleApplication(Rule rule,
-			Substitution substitution, AtomSet data, GIterator<Atom> atomsToAdd) {
+	public CloseableIterator<Atom> postRuleApplication(Rule rule,
+			Substitution substitution, AtomSet data, CloseableIterator<Atom> atomsToAdd) {
 		
 		AtomSet newFacts = substitution.createImageOf(rule.getHead());
-		graph.addEdges(substitution.createImageOf(rule.getBody()), newFacts.iterator(), rule, substitution); 
+		try {
+			graph.addEdges(substitution.createImageOf(rule.getBody()), newFacts.iterator(), rule, substitution);
+		} catch (IteratorException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
 		
 		return atomsToAdd;
 	}
@@ -46,10 +54,9 @@ public class GADRuleApplicationHandler implements RuleApplicationHandler{
 	
 	public RuleApplier<Rule, AtomSet> getRuleApplier(ChaseHaltingCondition chaseCondition) {
 		ChaseStopConditionWithHandler chaseConditionHandler = new ChaseStopConditionWithHandler(chaseCondition, this);
-		RuleApplier<Rule, AtomSet> ruleApplier = new ExhaustiveRuleApplier<AtomSet>(chaseConditionHandler);
+		RuleApplier<Rule, AtomSet> ruleApplier = new ExhaustiveRuleApplier<AtomSet>(StaticHomomorphism.instance(), chaseConditionHandler); 
+		//DefaultHomomorphismFactory.instance().getConjunctiveQuerySolver()
 		
-		/*Maven workaround*/
-		//RuleApplier<Rule, AtomSet> ruleApplier = new DefaultRuleApplier<AtomSet>(chaseCondition);
 		return ruleApplier;
 	}
 	

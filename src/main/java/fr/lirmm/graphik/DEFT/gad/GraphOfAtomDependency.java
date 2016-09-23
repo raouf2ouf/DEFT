@@ -18,6 +18,7 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
+import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class GraphOfAtomDependency {
 	private HashMap<String, LinkedList<GADEdge>> map;
@@ -30,7 +31,7 @@ public class GraphOfAtomDependency {
 		this.map = new HashMap<String, LinkedList<GADEdge>>();
 	}
 
-	public GraphOfAtomDependency(AtomSet atomset) {
+	public GraphOfAtomDependency(AtomSet atomset) throws IteratorException {
 		this();
 		this.initialise(atomset);
 	}
@@ -38,9 +39,11 @@ public class GraphOfAtomDependency {
 	/* --------------------------------
 	 * Public Methods
 	 * -------------------------------- */
-	public void initialise(AtomSet atomset){
+	public void initialise(AtomSet atomset) throws IteratorException{
 		this.map.clear();
-		for (Atom atom : atomset) {
+		CloseableIterator<Atom> it = atomset.iterator();
+		while (it.hasNext()) {
+			Atom atom = it.next();
 			this.addEdge(null, atom, null, null);
 		}
 	}
@@ -71,8 +74,8 @@ public class GraphOfAtomDependency {
 		this.addEdge(edge);
 	}
 	
-	public void addEdges(AtomSet from, Iterator<Atom> iteratorTargets,
-			Rule rule, Substitution substitution) {
+	public void addEdges(AtomSet from, CloseableIterator<Atom> iteratorTargets,
+			Rule rule, Substitution substitution) throws IteratorException {
 		while (iteratorTargets.hasNext()) {
 			Atom atom = iteratorTargets.next();
 			GADEdge edge = new GADEdge(from, atom, rule, substitution);
@@ -101,7 +104,7 @@ public class GraphOfAtomDependency {
 		return true;
 	}
 	
-	public LinkedList<Derivation> getDerivations(Atom atom) {
+	public LinkedList<Derivation> getDerivations(Atom atom) throws IteratorException {
 		LinkedList<Derivation> paths = new LinkedList<Derivation>();
 		/*if (isFact(atom)) {
 			return paths;
@@ -115,7 +118,9 @@ public class GraphOfAtomDependency {
 				LinkedList<Derivation> old = new LinkedList<Derivation>();
 				AtomSet atoms = edge.getSources();
 				if(atoms != null) {
-					for (Atom a : atoms) {
+					CloseableIterator<Atom> it = atoms.iterator();
+					while (it.hasNext()) {
+						Atom a = it.next();
 						old = _derivationCartesianProduct(getDerivations(a), old);
 					}
 				}
@@ -126,15 +131,17 @@ public class GraphOfAtomDependency {
 		return paths;
 	}
 	
-	public LinkedList<LinkedList<Derivation>> getDerivations(AtomSet atoms) {
+	public LinkedList<LinkedList<Derivation>> getDerivations(AtomSet atoms) throws IteratorException {
 		LinkedList<LinkedList<Derivation>> results = new LinkedList<LinkedList<Derivation>>();
-		for(Atom atom : atoms) {
+		CloseableIterator<Atom> it = atoms.iterator();
+		while(it.hasNext()) {
+			Atom atom = it.next();
 			results.add(getDerivations(atom));
 		}
 		return results;
 	}
 	
-	public LinkedList<LinkedList<LinkedList<Derivation>>> getReasoningPaths(ConjunctiveQuery query, AtomSet store) throws HomomorphismException {
+	public LinkedList<LinkedList<LinkedList<Derivation>>> getReasoningPaths(ConjunctiveQuery query, AtomSet store) throws HomomorphismException, IteratorException {
 		LinkedList<LinkedList<LinkedList<Derivation>>> results = new LinkedList<LinkedList<LinkedList<Derivation>>>();
 		
 		ConjunctiveQuery newquery = new DefaultConjunctiveQuery(query.getLabel(), query.getAtomSet(), new LinkedList(query.getAtomSet().getTerms(Term.Type.VARIABLE)));
