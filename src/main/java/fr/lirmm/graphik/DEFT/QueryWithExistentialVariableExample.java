@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
-import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.GeneralizedSpecificityArgumentPreference;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
@@ -41,7 +41,7 @@ public class QueryWithExistentialVariableExample {
         System.out.println("-------------------------------------------------\n");
         
         // set preference function
-        kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
+        kb.setPreferenceFunction(new GeneralizedSpecificityArgumentPreference());
         
         // The query might not be a fully ground atomic query, it might contain existential variables!
         // e.g. "?(X) :- s(a, X)."

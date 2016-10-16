@@ -3,7 +3,7 @@ package fr.lirmm.graphik.DEFT;
 import java.io.IOException;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
-import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.GeneralizedSpecificityArgumentPreference;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;

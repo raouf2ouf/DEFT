@@ -1,19 +1,24 @@
 package fr.lirmm.graphik.DEFT.core;
 
 public class Preference {
-	private String prefLabel1;
-	private String prefLabel2;
+	private String leftSideLabel;
+	private String rightSideLabel;
 	
-	public Preference(String prefLabel1, String prefLabel2) {
-		this.prefLabel1 = prefLabel1;
-		this.prefLabel2 = prefLabel2;
+	public Preference(String leftSideLabel, String rightSideLabel) {
+		this.leftSideLabel = leftSideLabel;
+		this.rightSideLabel = rightSideLabel;
 	}
 	
-	public String getPrefLabel1() {
-		return prefLabel1;
+	public String getLeftSide() {
+		return leftSideLabel;
 	}
 	
-	public String getPrefLabel2() {
-		return prefLabel2;
+	public String getRightSide() {
+		return rightSideLabel;
+	}
+	
+	
+	public String toString() {
+		return "[" + this.getLeftSide() + "]" + " > " + "[" + this.getRightSide() + "].";
 	}
 }

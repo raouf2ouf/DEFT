@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.Iterator;
+import java.io.StringReader;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,9 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
-import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentPreference;
 import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentationFramework;
-import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.ArgumentPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.GeneralizedSpecificityArgumentPreference;
 import fr.lirmm.graphik.DEFT.gad.Derivation;
 import fr.lirmm.graphik.DEFT.gad.GADRuleApplicationHandler;
 import fr.lirmm.graphik.DEFT.gad.GraphOfAtomDependency;
@@ -38,7 +39,6 @@ import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
 import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
 import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
 import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
@@ -62,10 +62,12 @@ public class DefeasibleKB {
 	public RuleSet defeasibleRuleSet;
 	public RuleSet negativeConstraintSet;
 	public RuleSet rules;
-
+	
 	public AtomSet strictAtomSet;
 	public AtomSet defeasibleAtomSet;
 	public AtomSet facts;
+	
+	public PreferenceSet preferenceSet;
 	
 	/**
 	 * Graph of Atom Dependency allows us to extract all possible Derivations for atoms.
@@ -82,7 +84,7 @@ public class DefeasibleKB {
 	// /////////////////////////////////////////////////////////////////////////
 	
 	/**
-	 * Simple constructors, creates an empty knowledge base.
+	 * Simple constructor, creates an empty knowledge base.
 	 */
 	public DefeasibleKB() {
 		// Everything is initialized to empty.
@@ -95,44 +97,34 @@ public class DefeasibleKB {
 		this.rules = new LinkedListRuleSet();
 
 		this.negativeConstraintSet = new LinkedListRuleSet();
-
+		
+		this.preferenceSet = new PreferenceSet();
+		
 		this.gad = new GraphOfAtomDependency();
 
-		this.af = new ArgumentationFramework(this, new GeneralizedSpecificityPreference());
+		this.af = new ArgumentationFramework(this, new GeneralizedSpecificityArgumentPreference());
 	}
 	
 	/**
-	 * Created a knowledge base from a stored DLGP file using the file's path string.
+	 * Creates a knowledge base from a stored DLGP file using the file's path string.
 	 */
 	public DefeasibleKB(String file) throws FileNotFoundException, AtomSetException {
 		this(new File(file));
 	}
 	
 	/**
-	 * Created a knowledge base from a DLGP file.
+	 * Creates a knowledge base from a DLGP file.
 	 */
 	public DefeasibleKB(File file) throws FileNotFoundException, AtomSetException {
 		this(new FileReader(file));
 	}
 	
 	/**
-	 * Created a knowledge base from a DLGP file.
+	 * Creates a knowledge base from a DLGP file.
 	 */
 	public DefeasibleKB(Reader reader) throws FileNotFoundException, AtomSetException {
 		this();
-		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations.
-		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(reader);
-		
-		while (dlgpParser.hasNext()) {
-			Object o = dlgpParser.next();
-			if (o instanceof Atom) {
-				this.addAtom((Atom) o);
-			} else if (o instanceof NegativeConstraint) {
-				this.addNegativeConstraint((Rule) o);
-			} else if (o instanceof Rule) {
-				this.addRule((Rule) o);
-			}
-		}
+		this.add(reader);
 	}
 	// /////////////////////////////////////////////////////////////////////////
 	// PUBLIC METHODS
@@ -154,9 +146,9 @@ public class DefeasibleKB {
 	/**
 	 * Parses a String and Adds the element (Atom, Rule, NegativeConstraint...).
 	 */
-	public void add(String str) {
+	public void add(Reader reader) {
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
-		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(str);
+		DlgpDEFTParser dlgpParser = new DlgpDEFTParser(reader);
 		while (dlgpParser.hasNext()) {
 			Object o = dlgpParser.next();
 			if (o instanceof Atom) {
@@ -165,8 +157,17 @@ public class DefeasibleKB {
 				this.addNegativeConstraint((Rule) o);
 			} else if (o instanceof Rule) {
 				this.addRule((Rule) o);
+			}  else if(o instanceof Preference) {
+				this.addPreference((Preference) o);
 			}
 		}
+	}
+	
+	/**
+	 * Parses a String and Adds the element (Atom, Rule, NegativeConstraint...).
+	 */
+	public void add(String str) {
+		this.add(new StringReader(str));
 	}
 	
 	/**
@@ -240,6 +241,21 @@ public class DefeasibleKB {
 		// Get a dlgp Parser made for DEFT (takes into account DEFT annotations).
 		Rule nc = DlgpDEFTParser.parseNegativeConstraint(ncString);
 		this.addNegativeConstraint(nc);
+	}
+	
+	/**
+	 * Adds a Preference to the knowledge base.
+	 */
+	public void addPreference(Preference preference) {
+		this.preferenceSet.add(preference);
+	}
+	
+	/**
+	 * Adds a Preference to the knowledge base after parsing it from a String.
+	 */
+	public void addPreference(String preferenceString) {
+		Preference preference = DlgpDEFTParser.parsePreference(preferenceString);
+		this.addPreference(preference);
 	}
 	
 	

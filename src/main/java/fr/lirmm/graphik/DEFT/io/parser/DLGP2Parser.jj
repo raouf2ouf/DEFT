@@ -840,7 +840,12 @@ void statement() :
     (
       (
       	(
-      	  ">" | (prefLabel1 = statement_name())
+      	  (
+      	    prefLabel1 = statement_name()
+      	  )?
+
+      	  ">"
+      	  
 	      {
 	        current_object = ParserListener.OBJECT_TYPE.PREFERENCE;
 	        if(prefLabel1==null) { prefLabel1 = name; }	  

@@ -325,6 +325,9 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		return (DefaultNegativeConstraint) new DlgpDEFTParser(s).next();
 	}
 	
+	public static Preference parsePreference(String s) {
+		return (Preference) new DlgpDEFTParser(s).next();
+	}
 	/**
 	 * Parse a DLP content and store data into the KnowledgeBase target.
 	 * 

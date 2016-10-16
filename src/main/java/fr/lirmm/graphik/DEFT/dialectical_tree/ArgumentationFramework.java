@@ -6,6 +6,7 @@ import java.util.List;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
 import fr.lirmm.graphik.DEFT.dialectical_tree.DialecticalTree.Node;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.ArgumentPreference;
 import fr.lirmm.graphik.DEFT.gad.Derivation;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;

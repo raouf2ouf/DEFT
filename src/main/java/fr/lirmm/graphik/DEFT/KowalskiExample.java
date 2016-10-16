@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleKB;
-import fr.lirmm.graphik.DEFT.dialectical_tree.GeneralizedSpecificityPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.GeneralizedSpecificityArgumentPreference;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.Substitution;
@@ -35,7 +35,7 @@ public class KowalskiExample {
         System.out.print(kb.toString());
         System.out.println("-------------------------------------------------\n");
         // set preference function, by default it's `GeneralizedSpecificityPreference`
-        kb.setPreferenceFunction(new GeneralizedSpecificityPreference());
+        kb.setPreferenceFunction(new GeneralizedSpecificityArgumentPreference());
         
         // Can Kowalski fly?
         // since our query is an atomic fully grounded query, there can only be one atom matching it.
