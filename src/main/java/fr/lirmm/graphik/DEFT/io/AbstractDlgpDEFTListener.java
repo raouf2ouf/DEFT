@@ -10,9 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import fr.lirmm.graphik.DEFT.core.DefeasibleAtom;
 import fr.lirmm.graphik.DEFT.core.DefeasibleRule;
+import fr.lirmm.graphik.DEFT.core.Preference;
 import fr.lirmm.graphik.DEFT.core.StrictAtom;
 import fr.lirmm.graphik.DEFT.core.StrictRule;
-import fr.lirmm.graphik.dlgp2.parser.ParserListener;
+import fr.lirmm.graphik.DEFT.io.parser.ParserListener;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.Constant;
@@ -44,7 +45,8 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 	private Atom atom;
 	private String label;
 	private boolean isDefeasible;
-	
+	private String prefLabel1;
+	private String prefLabel2;
 	
 	protected abstract void createAtomSet(InMemoryAtomSet atom);
 
@@ -54,10 +56,17 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 
 	protected abstract void createNegConstraint(
 			DefaultNegativeConstraint negativeConstraint);
-
+	
+	protected abstract void createPreference(Preference preference);
+	
 	//@Override
 	public void startsObject(OBJECT_TYPE objectType, String name) {
 		this.label = (name == null) ? "" : name;
+		
+		if(OBJECT_TYPE.PREFERENCE.equals(objectType)) { //it's a preference	
+			return;
+		}
+		
 		// Before Creating this object, check if it is defeasible
 		this.isDefeasible = this.isDefeasible(this.label);
 		
@@ -104,7 +113,12 @@ abstract class AbstractDlgpDEFTListener implements ParserListener {
 			this.answerVars.add((Term) t);
 		}
 	}
-
+	
+	//@Override
+	public void createsPreference(String label1, String label2) {
+		this.createPreference(new Preference(label1, label2));
+	}
+	
 	//@Override
 	public void endsConjunction(OBJECT_TYPE objectType) {
 		switch (objectType) {

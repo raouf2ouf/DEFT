@@ -13,9 +13,10 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.dlgp2.parser.DLGP2Parser;
-import fr.lirmm.graphik.dlgp2.parser.ParseException;
-import fr.lirmm.graphik.dlgp2.parser.TermFactory;
+import fr.lirmm.graphik.DEFT.core.Preference;
+import fr.lirmm.graphik.DEFT.io.parser.DLGP2Parser;
+import fr.lirmm.graphik.DEFT.io.parser.ParseException;
+import fr.lirmm.graphik.DEFT.io.parser.TermFactory;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
@@ -91,7 +92,11 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		protected void createNegConstraint(DefaultNegativeConstraint negativeConstraint) {
 			this.set.write(negativeConstraint);
 		}
-
+		
+		@Override
+		protected void createPreference(Preference preference) {
+			this.set.write(preference);
+		}
 		//@Override
 		public void declarePrefix(String prefix, String ns) {
 			this.set.write(new Prefix(prefix.substring(0, prefix.length() - 1),

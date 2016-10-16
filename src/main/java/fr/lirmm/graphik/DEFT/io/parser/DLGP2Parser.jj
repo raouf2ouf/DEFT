@@ -1,0 +1,1154 @@
+ /**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  JDK_VERSION = "1.6";
+
+  LOOKAHEAD= 2;
+  FORCE_LA_CHECK = true;
+  STATIC = false;
+  TOKEN_MANAGER_USES_PARSER = true;
+  JAVA_UNICODE_ESCAPE = true;  
+  //DEBUG_PARSER = true;
+  //DEBUG_LOOKAHEAD = true;
+}
+
+PARSER_BEGIN(DLGP2Parser)
+package fr.lirmm.graphik.DEFT.io.parser;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import javax.swing.event.EventListenerList;
+
+public class DLGP2Parser
+{
+  public static final String XSD="http://www.w3.org/2001/XMLSchema#";
+  public static final String RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+  public static String DEFAULT_BASE="http://www.lirmm.fr/dlgp/";
+  protected boolean una=false;
+  protected String top=null;
+  protected ParserListener.OBJECT_TYPE current_object = ParserListener.OBJECT_TYPE.UNKNOWN, 
+  declared_object = ParserListener.OBJECT_TYPE.UNKNOWN;
+  private PrefixManager prefixManager=new PrefixManager(DEFAULT_BASE);
+  protected ArrayList<String> directives=new ArrayList<String>();
+  /** The listener list. */
+  protected EventListenerList parserListenerList = new EventListenerList();
+  protected TermFactory termFactory;
+  
+
+  public DLGP2Parser(TermFactory termFactory, java.io.InputStream stream)
+  {
+    this (stream);
+    this.termFactory = termFactory;
+  }
+
+  public DLGP2Parser(TermFactory termFactory, java.io.InputStream stream, String encoding)
+  {
+    this (stream, encoding);
+    this.termFactory = termFactory;
+  }
+
+  public DLGP2Parser(TermFactory termFactory, Reader reader)
+  {
+    this (reader);
+    this.termFactory = termFactory;
+  }
+  public void fireDirective(String text)
+  {
+	fireParseEvent(new DirectiveEvent(text));
+  }
+  /**
+	 * Adds the parser listener.
+	 * 
+	 * @param l the listener
+	 */
+  public void addParserListener(ParserListener l)
+  {
+    parserListenerList.add(ParserListener.class, l);
+  }
+  
+  protected Object getIRIFromQName(String qname) throws ParseException
+  {
+        int colonIndex = qname.indexOf(':');
+        if(colonIndex == -1) {
+            throw new ParseException("Not a valid qname (missing ':') " + qname);
+        }
+        String prefix = qname.substring(0, colonIndex + 1);
+        if(!prefixManager.containsPrefix(prefix)) {
+            throw new ParseException("Prefix not declared: " + prefix);
+        }
+        return getIRI(prefixManager.getIRI(prefix)+qname.substring(colonIndex+1));
+    }
+   protected boolean isAbsolute(String s) {
+        int colonIndex = s.indexOf(':');
+        if (colonIndex == -1) return false;
+        else for (int i = 0; i < colonIndex; i++)
+        {
+            char ch = s.charAt(i);
+            if (!Character.isLetterOrDigit(ch) && ch != '.'
+                    && ch != '+' && ch != '-')  return false;
+        }
+        return true;
+    }
+
+ protected Object getIRI(String s) {
+         if(s.charAt(0) == '<') {
+            s = s.substring(1, s.length() - 1);
+            if(!isAbsolute(s)) s=prefixManager.getDefault()+s;
+        }
+         Object iri = termFactory.createIRI(s);
+         return iri;
+    }
+   public static String unescapeString(String s) {
+        if (s.indexOf('\\') == -1) {
+            return s;
+        }
+        StringBuilder sb = new StringBuilder(s.length());
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '\\') {
+                int j = i + 1;
+                if (j < s.length()) {
+                    char escCh = s.charAt(j);
+                    if (escCh == '\\' || escCh == '\"') {
+                        i++;
+                        sb.append(escCh);
+                    }
+                } else {
+                    sb.append('\\');
+                }
+            } else {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
+    }
+
+  /**
+	 * Removes the parser listener.
+	 * 
+	 * @param l the listener
+	 */
+  public void removeParserListener(ParserListener l)
+  {
+    parserListenerList.remove(ParserListener.class, l);
+  }
+
+  /**
+	 * Gets the parser listeners.
+	 * 
+	 * @return the parser listeners
+	 */
+  public ParserListener [] getParserListeners()
+  {
+    return (ParserListener []) parserListenerList
+    .getListeners(ParserListener.class);
+  }
+
+  protected void fireParseEvent(ParseEvent event)
+  {
+    // Guaranteed to return a non-null array
+    Object [] listeners = parserListenerList.getListenerList();
+    // Process the listeners last to first, notifying
+    // those that are interested in this event
+    for (int i = listeners.length - 2; i >= 0; i -= 2)
+    {
+      if (listeners [i] == ParserListener.class)
+      {
+        ParserListener pListener = (ParserListener) listeners [i + 1];
+        event.fire(pListener);
+      }
+    }
+  }
+  class DirectiveEvent implements ParseEvent
+  {
+    String text;
+    DirectiveEvent(String txt)
+    {
+      this.text = txt;
+    }
+    public void fire(ParserListener listener)
+    {
+      listener.directive(text);
+    }
+    
+  }
+  class DeclarePrefixEvent implements ParseEvent
+  {
+    String prefix;
+    String ns;
+	DeclarePrefixEvent(String prefix,String ns)
+	{
+	  this.prefix=prefix;
+	  this.ns=ns;
+	}
+    public void fire(ParserListener listener)
+    {
+      listener.declarePrefix(prefix, ns);
+    }
+  }
+  class DeclareTopEvent implements ParseEvent
+  {
+    String top;
+	DeclareTopEvent(String top)
+	{
+	  this.top=top;
+	}
+    public void fire(ParserListener listener)
+    {
+      listener.declareTop(top);
+    }
+  }
+  class DeclareBaseEvent implements ParseEvent
+  {
+    String base;
+	DeclareBaseEvent(String base)
+	{
+	  this.base=base;
+	}
+    public void fire(ParserListener listener)
+    {
+      listener.declareBase(base);
+    }
+  }
+  class DeclareUNAEvent implements ParseEvent
+  {
+	DeclareUNAEvent()
+	{
+	}
+    public void fire(ParserListener listener)
+    {
+      listener.declareUNA();
+    }
+  }
+  class StartsObjectEvent implements ParseEvent
+  {
+    ParserListener.OBJECT_TYPE objectType = null;
+    String name;
+    StartsObjectEvent(ParserListener.OBJECT_TYPE objectType, String name)
+    {
+      this.objectType = objectType;
+      this.name = name;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.startsObject(objectType, name);
+    }
+  }
+
+  class ConjunctionEndsEvent implements ParseEvent
+  {
+    ParserListener.OBJECT_TYPE objectType = null;
+    ConjunctionEndsEvent(ParserListener.OBJECT_TYPE objectType)
+    {
+      this.objectType = objectType;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.endsConjunction(objectType);
+    }
+  }
+
+  class FindsAtomEvent implements ParseEvent
+  {
+    Object predicate = null;
+    Object [] terms = null;
+    FindsAtomEvent(Object predicate, Object [] terms)
+    {
+      this.predicate = predicate;
+      this.terms = terms;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.createsAtom(predicate, terms);
+    }
+  }
+
+  class FindsEqualityEvent implements ParseEvent
+  {
+    Object term1 = null, term2 = null;
+    FindsEqualityEvent(Object term1, Object term2)
+    {
+      this.term1 = term1;
+      this.term2 = term2;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.createsEquality(term1, term2);
+    }
+  }
+
+  class FindsVarListEvent implements ParseEvent
+  {
+    Object [] varList = null;
+    FindsVarListEvent(Object [] varList)
+    {
+      this.varList = varList;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.answerTermList(varList);
+    }
+  }
+
+  class FindsPreferenceEvent implements ParseEvent
+  {
+    String prefLabel1 = null;
+    String prefLabel2 = null;
+    FindsPreferenceEvent(String prefLabel1, String prefLabel2)
+    {
+      this.prefLabel1 = prefLabel1;
+      this.prefLabel2 = prefLabel2;
+    }
+
+    public void fire(ParserListener listener)
+    {
+      listener.createsPreference(prefLabel1, prefLabel2);
+    }
+  }
+  
+  interface ParseEvent
+  {
+    void fire(ParserListener listener);
+  }
+  public void setDefaultBase(String defaultBase)
+  {
+        prefixManager.setDefault(defaultBase);
+  }
+protected class PrefixManager {
+	protected String defaultPrefix;
+	protected HashMap<String,Object> prefixTable=new HashMap<String,Object>();
+	public PrefixManager(String defaultPrefix)
+	{
+		setDefault(defaultPrefix);
+	}
+	public String getDefault()
+	{
+		return defaultPrefix;
+	}
+	public void setDefault(String defaultPrefix)
+	{
+		this.defaultPrefix=defaultPrefix;
+	}
+	public Object getIRI(String qname)
+	{
+		return prefixTable.get(qname);
+	}
+	public boolean containsPrefix(String prefix)
+	{
+		return prefixTable.containsKey(prefix);
+	}
+	public void setPrefix(String prefix,Object iri)
+	{
+		prefixTable.put(prefix,iri);
+	}
+}
+
+}
+PARSER_END(DLGP2Parser)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+| "&nbsp;"
+}
+
+MORE : {
+    <STRING_START: "\""> : IN_STRING
+}
+
+<IN_STRING> MORE :
+{
+    <ANY_ESCAPED_CHAR: "\\"~[] >
+}
+
+<IN_STRING> MORE :
+{
+    <ANY_CHAR: ~["\""]>
+}
+
+<IN_STRING> TOKEN:
+{
+    <STRING: "\""> : DEFAULT
+}
+
+MORE : {
+   < THREEQUOTES: ("\"\"\""|"'''") > : IN_LONG_STRING
+}
+
+<IN_LONG_STRING> MORE :
+{
+    <  (~[]) >
+}
+<IN_LONG_STRING> MORE :
+{
+    <ANY_ESCAPED_CHAR_IN_LONG_STRING: "\\"~[] >
+}
+
+
+<IN_LONG_STRING> TOKEN :
+{
+    <LONG_STRING: ("\"\"\""|"'''")> : DEFAULT
+}
+
+TOKEN:
+{
+    <DIGIT: ["0"-"9"]>
+}
+
+
+TOKEN:
+{
+    <DOUBLE: ("-" | "+") ? ((<DIGIT>)+ "." (<DIGIT>)* <EXPONENT> | "." (<DIGIT>)+ <EXPONENT> | (<DIGIT>)+ <EXPONENT>)>
+}
+TOKEN:
+{
+    <EXPONENT: 	("e" | "E") ("-" | "+")? (<DIGIT>)+>
+}
+TOKEN:
+{
+    <INTEGER: ("+" | "-")? (<DIGIT>)+>
+}
+
+TOKEN:
+{
+    <DECIMAL: ("-" | "+")? ( (<DIGIT>)+ "." (<DIGIT>)* | "." (<DIGIT>)+ | (<DIGIT>)+ )>
+}
+
+
+TOKEN:
+{
+    <TRUE: "true">
+}
+
+TOKEN:
+{
+    <FALSE: "false">
+}
+
+
+
+
+SPECIAL_TOKEN :
+{
+< directive: "%%" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+{
+  	String text=image.substring(2).trim();
+  	parser.fireDirective(text);
+}
+}
+SKIP :
+{
+  < comment_line :
+    "%" (~[ "\n", "\r" ])*
+    (
+      "\n"
+    | "\r"
+    | "\r\n"
+    )? >
+}
+TOKEN:
+{
+    < PREFIX: "@prefix" >
+|
+	< BASE: "@base" >
+|
+	< TOP: "@top" >
+|
+	< UNA: "@una" >
+|
+	< SECTION_FACTS: "@facts" >
+| 
+  	< SECTION_RULES: "@rules" >
+| 
+  	< SECTION_CONSTRAINTS: "@constraints" >
+| 
+  	< SECTION_QUERIES: "@queries" >
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+TOKEN:
+{
+    <OPENPAR: "(">
+}
+
+TOKEN:
+{
+    <CLOSEPAR: ")">
+}
+
+TOKEN:
+{
+    <OPEN_SQUARE_BRACKET: "[">
+}
+
+TOKEN:
+{
+    <CLOSE_SQUARE_BRACKET: "]">
+}
+
+
+
+TOKEN:
+{
+    <COMMA: ",">
+}
+
+TOKEN:
+{
+    <DOT: ".">
+}
+TOKEN:
+{
+    <UNDERSCORE: "_">
+}
+TOKEN:
+{
+    <AT: "@">
+}
+TOKEN :
+{
+    <DOUBLE_CARET: "^^">
+}
+
+TOKEN:
+{
+  	< U_IDENT : < UPPERCASE_CHAR > (< SIMPLE_CHAR >)* >
+}
+
+TOKEN:
+{
+	< L_IDENT : < LOWERCASE_CHAR > (< SIMPLE_CHAR >)* >
+}
+TOKEN:
+{
+< SIMPLE_CHAR : (<LETTER> | < DIGIT > | < UNDERSCORE >)>
+}
+TOKEN:
+{
+    <LETTER: < UPPERCASE_CHAR > | < LOWERCASE_CHAR >>
+}
+TOKEN:
+{
+  < UPPERCASE_CHAR : ["A"-"Z"] >
+}
+TOKEN:
+{
+  < LOWERCASE_CHAR : ["a"-"z"] >
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////
+//
+// IRIs
+
+TOKEN:
+{
+    <PN_LOCAL: ( <PN_CHARS_U> | < DIGIT > ) ((<PN_CHARS>|".")* <PN_CHARS>)?>
+}
+
+TOKEN:
+{
+    <FULLIRI: "<"(~[">", " "])*">">
+}
+TOKEN:
+{
+	< NAME_OBJECT: < OPEN_SQUARE_BRACKET > (< PN_CHARS >|" ")* < CLOSE_SQUARE_BRACKET > >
+}
+TOKEN:
+{
+    <PNAME_NS: (<PN_PREFIX>)? ":">
+}
+
+TOKEN:
+{
+    <PNAME_LN: <PNAME_NS> <PN_LOCAL>>
+}
+TOKEN:
+{
+  
+	< LANG: < AT > <PN_LOCAL >>
+}
+TOKEN:
+{
+    <PN_PREFIX: <PN_CHARS_BASE>((<PN_CHARS>|".")* <PN_CHARS>)?>
+}
+
+TOKEN:
+{
+    <PN_CHARS_BASE:   < LETTER >
+                    | ["\u00C0"-"\u00D6"]
+                    | ["\u00D8"-"\u00F6"]
+                    | ["\u00F8"-"\u02FF"]
+                    | ["\u0370"-"\u037D"]
+                    | ["\u037F"-"\u1FFF"]
+                    | ["\u200C"-"\u200D"]
+                    | ["\u2070"-"\u218F"]
+                    | ["\u2C00"-"\u2FEF"]
+                    | ["\u3001"-"\uD7FF"]
+                    | ["\uF900"-"\uFDCF"]
+                    | ["\uFDF0"-"\uFFFD"]>
+}
+
+
+TOKEN:
+{
+    <PN_CHARS:   <PN_CHARS_U>
+               | "-"
+               | < DIGIT >
+               | "\u00B7"
+               | ["\u0300"-"\u036F"]
+               | ["\u203F"-"\u2040"]>
+}
+
+TOKEN:
+{
+    <PN_CHARS_U: <PN_CHARS_BASE> | < UNDERSCORE>>
+}
+
+void document() :
+{
+int nb_statement=0;
+  }
+{
+    header()
+    body()
+  < EOF >
+}
+void header():
+{
+}
+{
+   (parseBaseDecl())? (parsePrefixDecl())* (parseTopDecl())? (parseUNADecl())?
+}
+
+Object parseResource() :
+{
+    Object iri;
+}
+{
+    (iri=parseIRI() | iri=parseAbbreviatedIRI()) {
+        return iri;
+    }
+}
+
+Object parseAbbreviatedIRI() :
+{
+    Token t;
+}
+{
+    t=<PNAME_LN> {
+        return getIRIFromQName(t.image);
+    }
+}
+
+Object parseIRI() :
+{
+    Token t;
+}
+{
+    t=<FULLIRI> {return getIRI(t.image);}
+}
+
+void parsePrefixDecl() :
+{
+    Token t;
+    String prefix = "";
+    Object ns;
+}
+{
+    <PREFIX> t=<PNAME_NS>{prefix=t.image;} ns=parseIRI() {
+      	String s=ns.toString();
+        if(s.startsWith("<"))
+			s=s.substring(1,s.length()-1);
+        prefixManager.setPrefix(prefix, s);
+        fireParseEvent(new DeclarePrefixEvent(prefix, s));
+    }
+}
+
+void parseBaseDecl() :
+{
+    String base;
+    Token t;
+}
+{
+    <BASE> t=<FULLIRI> {base = t.image.substring(1, t.image.length() - 1);} {
+      	prefixManager.setDefault(base);
+        fireParseEvent(new DeclareBaseEvent(base));
+    }
+}
+void parseTopDecl() :
+{
+    String topString;
+    Token t;
+}
+{
+  
+   (
+     < TOP > t=<FULLIRI>
+      	{
+      	  	topString = t.image.substring(1, t.image.length() - 1);} {
+        	fireParseEvent(new DeclareTopEvent(topString));
+    	}
+   	)
+	|
+	(
+	  < TOP > t=< L_IDENT >
+      	{
+      	  	topString=prefixManager.getDefault()+t.image;
+        	fireParseEvent(new DeclareTopEvent(topString));
+    	}
+	) 
+}
+void parseUNADecl() :
+{
+}
+{
+	< UNA >
+	{
+	una=true;
+	fireParseEvent(new DeclareUNAEvent());
+	}
+}
+
+void body() :
+{
+}
+{
+  (
+    (
+    statement()
+    {
+       current_object = ParserListener.OBJECT_TYPE.UNKNOWN;
+    }
+  )+
+| 
+  (
+    section()
+  )+
+)?	   
+}
+void section() :
+{
+}
+{
+  (
+    < SECTION_FACTS >
+    {
+		declared_object = ParserListener.OBJECT_TYPE.FACT;
+    }
+  | < SECTION_RULES >
+    {
+		declared_object = ParserListener.OBJECT_TYPE.RULE;
+    }
+  | < SECTION_CONSTRAINTS >
+    {
+		declared_object = ParserListener.OBJECT_TYPE.NEG_CONSTRAINT;
+    }
+  | < SECTION_QUERIES >
+    {
+		declared_object = ParserListener.OBJECT_TYPE.QUERY;
+    }
+  )
+  (
+    statement()
+    {
+       current_object = ParserListener.OBJECT_TYPE.UNKNOWN;
+    }
+  )*
+}
+  
+/**
+* Parse the name of the new object
+* all OBJECT_TYPE can optionally be named
+*
+**/
+String statement_name() :
+{
+}
+{
+  (
+    < NAME_OBJECT >
+  )
+  {
+    return token.image.substring(1,token.image.length()-1);
+  }
+
+}
+
+/**
+*	this method parses a list of atoms
+*   and optionally return a list of pending
+*   actions when OBJECT_TYPE is UNKNOWN
+**/
+ArrayList < ParseEvent > conjunction(String name) :
+{
+  ArrayList < ParseEvent > pending_events = null;
+  ParseEvent event;
+  if (current_object == ParserListener.OBJECT_TYPE.UNKNOWN)
+  	{
+  	  if(declared_object!=ParserListener.OBJECT_TYPE.UNKNOWN)
+  	  {
+  	  	current_object=declared_object;
+  	  	fireParseEvent(new StartsObjectEvent(current_object, name));
+  	  }
+  	  else pending_events = new ArrayList < ParseEvent > ();
+  	}
+     
+}
+{
+  event=atom()
+  {
+    if(pending_events==null) fireParseEvent(event);
+    else pending_events.add(event);
+  }
+  (
+    "," 
+    event=atom()
+    {
+    if(pending_events==null) fireParseEvent(event);
+    else pending_events.add(event);      
+    }
+  )*
+  {
+    return pending_events;
+  }
+}
+
+void statement() :
+{
+  String name = null;
+  String prefLabel1 = null;
+  String prefLabel2 = null;
+  ArrayList < ParseEvent > pending_events = null;
+}
+{
+  (
+    (
+      name = statement_name()
+    )?
+    (
+      (
+      	(
+      	  ">" | (prefLabel1 = statement_name())
+	      {
+	        current_object = ParserListener.OBJECT_TYPE.PREFERENCE;
+	        if(prefLabel1==null) { prefLabel1 = name; }	  
+	      }
+     	)
+     	(
+     	  prefLabel2 = statement_name()
+     	)
+     	"."
+     	{
+     		fireParseEvent(new FindsPreferenceEvent(prefLabel1, prefLabel2));
+     		return;
+     	}
+      )
+    | 
+      (
+        "?"
+        {
+          // begin query
+          current_object = ParserListener.OBJECT_TYPE.QUERY;
+          fireParseEvent(new StartsObjectEvent(ParserListener.OBJECT_TYPE.QUERY, name));
+        }
+       (
+          "(" var_list() ")"
+       )?
+          ":-" conjunction(null) "."
+        {
+          fireParseEvent(new ConjunctionEndsEvent(ParserListener.OBJECT_TYPE.QUERY));
+          return;
+        }
+      )
+    |
+      (
+          "!" ":-"
+        {
+          // begin negative constraint
+          current_object = ParserListener.OBJECT_TYPE.NEG_CONSTRAINT;
+          fireParseEvent(new StartsObjectEvent(ParserListener.OBJECT_TYPE.NEG_CONSTRAINT, name));
+        }
+        conjunction(null) "."
+        {
+          fireParseEvent(new ConjunctionEndsEvent(ParserListener.OBJECT_TYPE.NEG_CONSTRAINT));
+          return;
+        }
+      )
+    | 
+      pending_events = conjunction(name)
+    )
+    (
+      "."
+      {
+        current_object = ParserListener.OBJECT_TYPE.FACT;
+        if (pending_events != null)
+        {
+          // call listeners for all pending atoms
+          fireParseEvent(new StartsObjectEvent(ParserListener.OBJECT_TYPE.FACT, name));
+          for (ParseEvent pending_event : pending_events) fireParseEvent(pending_event);
+        }
+        fireParseEvent(new ConjunctionEndsEvent(ParserListener.OBJECT_TYPE.FACT));
+        return;
+      }
+    |
+      (
+        ":-"
+        {
+          current_object = ParserListener.OBJECT_TYPE.RULE;
+          if (pending_events != null)
+          {
+            // call listeners for all pending atoms
+            fireParseEvent(new StartsObjectEvent(ParserListener.OBJECT_TYPE.RULE, name));
+            for (ParseEvent pending_event : pending_events) fireParseEvent(pending_event);
+          }
+          fireParseEvent(new ConjunctionEndsEvent(ParserListener.OBJECT_TYPE.RULE));
+        }
+        conjunction(null) "."
+        {
+          fireParseEvent(new ConjunctionEndsEvent(ParserListener.OBJECT_TYPE.RULE));
+          return;
+        }
+      )
+    )
+  )
+}
+
+Object parseLiteral() :
+{
+  	Object literal;
+     String qs;
+    String lang = null;
+    Object datatype = null;
+    Token t;
+}
+{
+    (qs=parseQuotedString() ((t=< LANG > {lang=t.image;})|(<DOUBLE_CARET> datatype=parseResource())  )?
+        {
+            if(datatype != null) {
+                return termFactory.createLiteral(datatype,qs,null);
+            }
+            else if(lang != null) {
+              	Object stringIRI=termFactory.createIRI(RDF+"langString");
+                return termFactory.createLiteral(stringIRI,qs,lang.substring(1));
+            }
+            else {
+              	Object stringIRI=termFactory.createIRI(XSD+"string");
+                return termFactory.createLiteral(stringIRI,qs,null);
+            }
+
+        }
+    )
+    |
+    (literal=parseInteger(){return literal;})
+    |
+    (literal=parseDouble(){return literal;})
+    |
+    (literal=parseDecimal(){return literal;})
+    |
+    (literal=parseBoolean(){return literal;})
+}
+
+
+Object parseInteger() :
+{
+    Token t;
+}
+{
+    t=<INTEGER> {
+            Object integerIRI=termFactory.createIRI(XSD+"integer");
+       	 	return termFactory.createLiteral(integerIRI,t.image,null);
+    }
+    |
+    t=<DIGIT> {
+            Object integerIRI=termFactory.createIRI(XSD+"integer");
+       	 	return termFactory.createLiteral(integerIRI,t.image,null);
+    }
+}
+
+Object parseDouble() :
+{
+    Token t;
+}
+{
+    t=<DOUBLE> {
+            Object doubleIRI=termFactory.createIRI(XSD+"double");
+       	 	return termFactory.createLiteral(doubleIRI,t.image,null);
+     }
+}
+
+Object parseDecimal() :
+{
+    Token t;
+}
+{
+    t=<DECIMAL> {
+            Object decimalIRI=termFactory.createIRI(XSD+"decimal");
+       	 	return termFactory.createLiteral(decimalIRI,t.image,null);
+    }
+}
+
+Object parseBoolean() :
+{
+    Token t;
+}
+{
+    (t=<TRUE> | t=<FALSE>) {
+            Object boolIRI=termFactory.createIRI(XSD+"boolean");
+       	 	return termFactory.createLiteral(boolIRI,t.image,null);
+    }
+}
+
+String parseQuotedString() :
+{
+    String s;
+}
+{
+    s=parseString() {
+        return s;
+    }
+}
+
+
+String parseString() :
+{
+    Token t;
+    String rawString = "";
+}
+{
+    (t=<STRING> {
+        rawString = t.image.substring(1, t.image.length() - 1);
+    }
+    | t=<LONG_STRING> {
+        rawString = t.image.substring(3, t.image.length() - 3);
+     }) {
+        return unescapeString(rawString);
+     }
+}
+
+void var_list() :
+{
+  ArrayList < Object > listVar = new ArrayList < Object > ();
+  Object var;
+}
+{
+  var = variable()
+  {
+    listVar.add(var);
+  }
+  (
+    "," 
+    var = variable()
+    {
+      listVar.add(var);
+    }
+  )*
+  {
+    fireParseEvent(new FindsVarListEvent(listVar.toArray(new Object [ listVar.size() ])));
+  }
+}
+
+Object variable() :
+{}
+{
+  < U_IDENT >
+  {
+    return termFactory.createVariable(token.image);
+  }
+}
+
+ParseEvent atom() :
+{
+  ParseEvent event=null;
+}
+{
+  (    
+	  event = std_atom()
+	| 
+	  event = equality()
+	)
+  {
+    return event;
+  }
+  
+}
+
+ParseEvent std_atom() :
+{
+  Object predicate;
+  ArrayList < Object > listTerm = new ArrayList < Object > ();
+}
+{
+  (
+    < L_IDENT >
+    {
+      predicate=termFactory.createIRI(prefixManager.getDefault()+token.image);
+    }
+  | 
+   predicate=parseResource()
+   {
+   }
+  )
+  {
+  }
+  "(" term(listTerm)
+  (
+    "," term(listTerm)
+  )*
+  ")"
+  {
+    return new FindsAtomEvent(predicate, listTerm.toArray(new Object [ listTerm.size() ]));
+  }
+}
+
+ParseEvent equality() :
+{
+  ArrayList < Object > listTerm = new ArrayList < Object > ();
+}
+{
+  term(listTerm) "=" term(listTerm)
+  {
+    return new FindsEqualityEvent(listTerm.get(0), listTerm.get(1));
+  }
+}
+
+void term(ArrayList < Object > listTerm) :
+{
+  Object lit;
+  Object iri;
+}
+{
+  (
+    < U_IDENT >
+    {
+      listTerm.add(termFactory.createVariable(token.image));
+    }
+  | 
+    < L_IDENT >
+    {
+      iri=termFactory.createIRI(prefixManager.getDefault()+token.image);
+      listTerm.add(iri);
+    }
+  | 
+    iri=parseResource()
+    {
+      listTerm.add(iri);
+    }
+  | 
+    lit=parseLiteral()
+    {
+      listTerm.add(lit);
+    }
+  )
+}
