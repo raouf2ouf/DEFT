@@ -5,7 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +17,9 @@ import fr.lirmm.graphik.DEFT.dialectical_tree.Argument;
 import fr.lirmm.graphik.DEFT.dialectical_tree.ArgumentationFramework;
 import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.ArgumentPreference;
 import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.GeneralizedSpecificityArgumentPreference;
+import fr.lirmm.graphik.DEFT.dialectical_tree.argument_preference.OrderingBasedArgumentPreference;
 import fr.lirmm.graphik.DEFT.gad.Derivation;
+import fr.lirmm.graphik.DEFT.gad.GADEdge;
 import fr.lirmm.graphik.DEFT.gad.GADRuleApplicationHandler;
 import fr.lirmm.graphik.DEFT.gad.GraphOfAtomDependency;
 import fr.lirmm.graphik.DEFT.io.DlgpDEFTParser;
@@ -102,7 +105,9 @@ public class DefeasibleKB {
 		
 		this.gad = new GraphOfAtomDependency();
 
-		this.af = new ArgumentationFramework(this, new GeneralizedSpecificityArgumentPreference());
+		//this.af = new ArgumentationFramework(this, new GeneralizedSpecificityArgumentPreference());
+		//this.af = new ArgumentationFramework(this, new OrderingBasedArgumentPreference());
+		this.af = new ArgumentationFramework(this, new OrderingBasedArgumentPreference(new GeneralizedSpecificityArgumentPreference()));
 	}
 	
 	/**
@@ -410,7 +415,7 @@ public class DefeasibleKB {
 				LOGGER.info("Derivation :" + d.toString());
 			}
 			
-			arguments.add(new Argument(d, atom));
+			arguments.add(new Argument(d, atom, this.preferenceSet));
 		}
 
 		for (Argument arg : arguments) {

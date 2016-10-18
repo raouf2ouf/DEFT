@@ -637,7 +637,7 @@ Object parseResource() :
     Object iri;
 }
 {
-    (iri=parseIRI() | iri=parseAbbreviatedIRI()) {
+    (iri=parseAbbreviatedIRI() | iri=parseIRI() ) {
         return iri;
     }
 }
@@ -1044,23 +1044,16 @@ String parseString() :
 
 void var_list() :
 {
-  ArrayList < Object > listVar = new ArrayList < Object > ();
-  Object var;
+  ArrayList < Object > listTerm = new ArrayList < Object > ();
 }
 {
-  var = variable()
-  {
-    listVar.add(var);
-  }
+    term(listTerm)
   (
-    "," 
-    var = variable()
-    {
-      listVar.add(var);
-    }
+    "," term(listTerm)
   )*
+  
   {
-    fireParseEvent(new FindsVarListEvent(listVar.toArray(new Object [ listVar.size() ])));
+    fireParseEvent(new FindsVarListEvent(listTerm.toArray(new Object [ listTerm.size() ])));
   }
 }
 

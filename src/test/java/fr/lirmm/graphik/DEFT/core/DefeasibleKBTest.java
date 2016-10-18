@@ -73,13 +73,7 @@ public class DefeasibleKBTest {
 		kb.addAtom("p(a).");
 		kb.addAtom("[DEFT] p(a).");
 		kb.addAtom("[DEFT] p(b).");
-		/*for(Atom atom : kb.strictAtomSet) {
-			System.out.println(atom);
-		}
-		System.out.println("-----");
-		for(Atom atom : kb.defeasibleAtomSet) {
-			System.out.println(atom);
-		}*/
+
 		assertFalse("Failure - Defeasible atom set must not be empty.", kb.defeasibleAtomSet.isEmpty());
 	}
 	
@@ -88,8 +82,8 @@ public class DefeasibleKBTest {
 		DefeasibleKB kb = new DefeasibleKB();
 		
 		kb.addRule("p(X) :- q(X).");
-		kb.addRule("[DEFT] p(X) :- q(X).");
-		kb.addRule("[DEFT] p(X) :- s(X).");
+		kb.addRule("[DEFTr1] p(X) :- q(X).");
+		kb.addRule("[DEFTr2] p(X) :- s(X).");
 		
 		assertTrue("Failure - Defeasible rule set must not be empty.", kb.defeasibleRuleSet.iterator().hasNext());
 	}

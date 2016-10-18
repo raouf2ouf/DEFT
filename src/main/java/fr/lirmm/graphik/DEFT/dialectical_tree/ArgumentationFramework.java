@@ -207,7 +207,7 @@ public class ArgumentationFramework {
 		LinkedList<Derivation> derivations = this.kb.getDerivationsFor(atom);
 		
 		for(Derivation d : derivations) {
-			arguments.add(new Argument(d, atom));
+			arguments.add(new Argument(d, atom, kb.preferenceSet));
 		}
 		return arguments;
 	}
