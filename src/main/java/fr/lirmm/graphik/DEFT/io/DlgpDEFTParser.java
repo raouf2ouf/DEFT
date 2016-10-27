@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,9 +61,14 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	private static class DlgpListener extends AbstractDlgpDEFTListener {
 
 		private ArrayBlockingStream<Object> set;
-
+		private Collection<Object> setNonBlock;
+		
 		DlgpListener(ArrayBlockingStream<Object> buffer) {
 			this.set = buffer;
+		}
+		
+		DlgpListener(Collection<Object> buffer) {
+			this.setNonBlock = buffer;
 		}
 
 		@Override
@@ -74,56 +82,64 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 					a.setTerm(i, s.createImageOf(term));
 					i++;
 				}
-				this.set.write(a);
+				this.write(a);
 			}
 		}
 
 		@Override
 		protected void createQuery(ConjunctiveQuery query) {
-			this.set.write(query);
+			this.write(query);
 		}
 
 		@Override
 		protected void createRule(Rule rule) {
-			this.set.write(rule);
+			this.write(rule);
 		}
 
 		@Override
 		protected void createNegConstraint(DefaultNegativeConstraint negativeConstraint) {
-			this.set.write(negativeConstraint);
+			this.write(negativeConstraint);
 		}
 		
 		@Override
 		protected void createPreference(Preference preference) {
-			this.set.write(preference);
+			this.write(preference);
 		}
 		//@Override
 		public void declarePrefix(String prefix, String ns) {
-			this.set.write(new Prefix(prefix.substring(0, prefix.length() - 1),
+			this.write(new Prefix(prefix.substring(0, prefix.length() - 1),
 					ns));
 		}
 
 		//@Override
 		public void declareBase(String base) {
-			this.set.write(new Directive(Directive.Type.BASE, base));
+			this.write(new Directive(Directive.Type.BASE, base));
 		}
 
 		//@Override
 		public void declareTop(String top) {
-			this.set.write(new Directive(Directive.Type.TOP, top));
+			this.write(new Directive(Directive.Type.TOP, top));
 		}
 
 		//@Override
 		public void declareUNA() {
-			this.set.write(new Directive(Directive.Type.UNA, ""));
+			this.write(new Directive(Directive.Type.UNA, ""));
 		}
 
 		//@Override
 		public void directive(String text) {
-			this.set.write(new Directive(Directive.Type.COMMENT, text));
+			this.write(new Directive(Directive.Type.COMMENT, text));
+		}
+		
+		private void write(Object object) {
+			if(this.setNonBlock == null) {
+				this.set.write(object);
+			} else {
+				this.setNonBlock.add(object);
+			}
 		}
 	};
-
+	
 	private static class InternalTermFactory implements TermFactory {
 
 		//@Override
@@ -152,17 +168,27 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	private static class Producer implements Runnable {
 
 		private Reader reader;
-		private ArrayBlockingStream<Object> buffer;
-
+		private ArrayBlockingStream<Object> bufferBlock;
+		private Collection<Object> bufferNonBlock;
+		
 		Producer(Reader reader, ArrayBlockingStream<Object> buffer) {
 			this.reader = reader;
-			this.buffer = buffer;
+			this.bufferBlock = buffer;
 		}
 
+		Producer(Reader reader, Collection<Object> buffer) {
+			this.reader = reader;
+			this.bufferNonBlock = buffer;
+		}
+		
 		//@Override
 		public void run() {
 			DLGP2Parser parser = new DLGP2Parser(new InternalTermFactory(), reader);
-			parser.addParserListener(new DlgpListener(buffer));
+			if(this.bufferBlock != null) {
+				parser.addParserListener(new DlgpListener(bufferBlock));
+			} else {
+				parser.addParserListener(new DlgpListener(bufferNonBlock));
+			}
 			parser.setDefaultBase("");
 
 			try {
@@ -170,7 +196,9 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 			} catch (ParseException e) {
 				throw new ParseError("An error occured while parsing", e);
 			} finally {
-				buffer.close();
+				if(this.bufferBlock != null) {
+					bufferBlock.close();
+				}
 			}
 		}
 	}
@@ -234,6 +262,7 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 		t.setUncaughtExceptionHandler(exceptionHandler);
 		t.start();
 	}
+	
 
 	/**
 	 * Constructor for parsing from the given file.
@@ -306,11 +335,15 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	// /////////////////////////////////////////////////////////////////////////
 
 	public static ConjunctiveQuery parseQuery(String s) {
-		return (ConjunctiveQuery) new DlgpDEFTParser(s).next();
+		LinkedList<Object> buffer = new LinkedList<Object>();
+		new Producer(new StringReader(s), buffer).run();
+		return (ConjunctiveQuery) buffer.getFirst();
 	}
 
 	public static Atom parseAtom(String s) {
-		return (Atom) new DlgpDEFTParser(s).next();
+		LinkedList<Object> buffer = new LinkedList<Object>();
+		new Producer(new StringReader(s), buffer).run();
+		return (Atom) buffer.getFirst();
 	}
 	
 	public static CloseableIterator<Atom> parseAtomSet(String s) {
@@ -318,15 +351,21 @@ public final class DlgpDEFTParser extends AbstractCloseableIterator<Object> impl
 	}
 	
 	public static Rule parseRule(String s) {
-		return (Rule) new DlgpDEFTParser(s).next();
+		LinkedList<Object> buffer = new LinkedList<Object>();
+		new Producer(new StringReader(s), buffer).run();
+		return (Rule) buffer.getFirst();
 	}
 	
 	public static DefaultNegativeConstraint parseNegativeConstraint(String s) {
-		return (DefaultNegativeConstraint) new DlgpDEFTParser(s).next();
+		LinkedList<Object> buffer = new LinkedList<Object>();
+		new Producer(new StringReader(s), buffer).run();
+		return (DefaultNegativeConstraint) buffer.getFirst();
 	}
 	
 	public static Preference parsePreference(String s) {
-		return (Preference) new DlgpDEFTParser(s).next();
+		LinkedList<Object> buffer = new LinkedList<Object>();
+		new Producer(new StringReader(s), buffer).run();
+		return (Preference) buffer.getFirst();
 	}
 	/**
 	 * Parse a DLP content and store data into the KnowledgeBase target.
