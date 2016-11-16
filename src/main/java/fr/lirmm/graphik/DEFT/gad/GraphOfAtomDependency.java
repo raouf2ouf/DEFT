@@ -7,8 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import fr.lirmm.graphik.DEFT.core.DefeasibleRule;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
+import fr.lirmm.graphik.graal.api.core.AtomSetException;
 import fr.lirmm.graphik.graal.api.core.ConjunctiveQuery;
 import fr.lirmm.graphik.graal.api.core.InMemoryAtomSet;
 import fr.lirmm.graphik.graal.api.core.Rule;
@@ -49,11 +51,12 @@ public class GraphOfAtomDependency {
 	}
 	
 	public void addEdge(GADEdge edge) {
-		LinkedList<GADEdge> edges = this.map.get(edge.getTarget().toString());
+		String targetString = edge.getTarget().toString();
+		LinkedList<GADEdge> edges = this.map.get(targetString);
 		if (null == edges) { // The target atom has never been tracked before
 			edges = new LinkedList<GADEdge>();
 			edges.add(edge);
-			this.map.put(edge.getTarget().toString(), edges);
+			this.map.put(targetString, edges);
 		} else { // The target atom has been 'seen' before
 			String newEdge = edge.toString();
 			boolean exists = false;
@@ -64,7 +67,11 @@ public class GraphOfAtomDependency {
 				}
 			}
 			
-			if(!exists) edges.add(edge);
+			if(!exists) {
+				Rule rule = edges.iterator().next().getRule();
+				if(null != rule)
+					edges.add(edge);
+			}
 		}
 	}
 	
@@ -156,6 +163,64 @@ public class GraphOfAtomDependency {
 		return results;
 	}
 	
+	
+	public List<CompactDerivation> getCompactDerivationFor(Atom atom) throws IteratorException, AtomSetException {
+		if(this.isFact(atom)) {
+			return null;
+		}
+		
+		List<CompactDerivation> derivations = new LinkedList<CompactDerivation>();
+		List<GADEdge> edges = getInEdges(atom);
+		if(null == edges) {
+			System.out.println("/!\\ Atom with no incoming edges! This should never occur! /!\\");
+			return null; // this should never occur
+		}
+		
+		// get all edges for this atom
+		Iterator<GADEdge> itEdges = edges.iterator();
+		while(itEdges.hasNext()) {
+			GADEdge edge = itEdges.next();
+			CompactDerivation deriv = new CompactDerivation(atom);
+			if(edge.getRule() instanceof DefeasibleRule) {
+				deriv.setIsDefeasible(true);
+			}
+			// continue till we find all branching
+			CloseableIterator<Atom> itSources = edge.getSources().iterator();
+			while(itSources.hasNext()) {
+				Atom source = itSources.next();
+				followDerivation(source, deriv);
+			}
+			derivations.add(deriv);
+		}
+		
+		return derivations;
+	}
+	
+	public void followDerivation(Atom atom, CompactDerivation derivation) throws IteratorException, AtomSetException {
+		LinkedList<GADEdge> edges = this.getInEdges(atom);	
+		if(edges.size() > 1) { // a branching atom
+			derivation.addBranchingAtom(atom);
+		} else {
+			derivation.addNonBranchingAtom(atom);
+			// continue till we reach a fact or a branching atom
+			Iterator<GADEdge> itEdges = edges.iterator();
+			while(itEdges.hasNext()) {
+				GADEdge edge = itEdges.next();
+				if(edge.getRule() instanceof DefeasibleRule) {
+					derivation.setIsDefeasible(true);
+				}
+				AtomSet sources = edge.getSources();
+				if(null == sources) { // this is a fact
+					continue;
+				}
+				CloseableIterator<Atom> itSources = sources.iterator();
+				while(itSources.hasNext()) {
+					followDerivation(itSources.next(), derivation);
+				}
+			}
+		}
+		
+	}
 	/* --------------------------------
 	 * Private Methods
 	 * -------------------------------- */

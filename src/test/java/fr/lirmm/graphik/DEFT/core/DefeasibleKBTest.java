@@ -67,7 +67,7 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testParseDefeasibleAtom() throws AtomSetException {
+	public void testParseDefeasibleAtom() throws AtomSetException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
 		kb.addAtom("p(a).");
@@ -78,7 +78,7 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
-	public void testParseDefeasibleRule() {
+	public void testParseDefeasibleRule() throws IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
 		kb.addRule("p(X) :- q(X).");

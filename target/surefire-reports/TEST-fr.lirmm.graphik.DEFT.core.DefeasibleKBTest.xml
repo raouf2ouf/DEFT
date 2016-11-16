@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="27" failures="0" name="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" time="0.524" errors="0" skipped="0">
+<testsuite tests="22" failures="0" name="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" time="0.208" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -59,31 +59,26 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testPreferenceBasedEntailmentCase01" time="0.251"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testPreferenceBasedEntailmentCase02" time="0.01"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testPreferenceBasedEntailmentCase03" time="0.007"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testPreferenceBasedEntailmentCase04" time="0.007"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testRulesOrder" time="0.013"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testNegativeConstraintAtomsOrder" time="0.011"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase10" time="0.024"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase11" time="0.018"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase1" time="0.011"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase2" time="0.01"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase3" time="0.008"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase4" time="0.015"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase5" time="0.017"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase6" time="0.007"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase7" time="0.005"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testRulesOrder" time="0.021"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testNegativeConstraintAtomsOrder" time="0.009"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase10" time="0.014"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase11" time="0.021"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase1" time="0.01"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase2" time="0.006"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase3" time="0.014"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase4" time="0.008"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase5" time="0.008"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase6" time="0.009"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase7" time="0.01"/>
   <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase8" time="0.007"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase9" time="0.018"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationStrictAtoms" time="0.006"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationStrictRules" time="0.003"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileInstantiationEntailement" time="0.006"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationFacts" time="0.008"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testExplicitInstantiationEntailement" time="0.015"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationDefeasibleAtoms" time="0.002"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationDefeasibleRules" time="0.008"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testPreferenceParsing" time="0.01"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testParseDefeasibleAtom" time="0.002"/>
-  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testParseDefeasibleRule" time="0.002"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testEntailementCase9" time="0.008"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationStrictAtoms" time="0.001"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationStrictRules" time="0.002"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileInstantiationEntailement" time="0.008"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationFacts" time="0.002"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testExplicitInstantiationEntailement" time="0.023"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationDefeasibleAtoms" time="0.007"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testFileVSExplicitInstantiationDefeasibleRules" time="0.002"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testParseDefeasibleAtom" time="0.003"/>
+  <testcase classname="fr.lirmm.graphik.DEFT.core.DefeasibleKBTest" name="testParseDefeasibleRule" time="0.008"/>
 </testsuite>

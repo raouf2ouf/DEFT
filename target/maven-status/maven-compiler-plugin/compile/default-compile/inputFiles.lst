@@ -31,4 +31,5 @@
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/gad/Derivation.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/core/PreferenceSet.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/io/parser/TokenMgrError.java
+/home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/gad/CompactDerivation.java
 /home/abidech/workspace/java/DEFT/src/main/java/fr/lirmm/graphik/DEFT/dialectical_tree/argument_preference/GeneralizedSpecificityArgumentPreference.java

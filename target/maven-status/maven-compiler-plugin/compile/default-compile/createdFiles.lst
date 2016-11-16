@@ -54,4 +54,5 @@ fr/lirmm/graphik/DEFT/io/parser/DLGP2Parser$StartsObjectEvent.class
 fr/lirmm/graphik/DEFT/io/parser/DLGP2Parser$JJCalls.class
 fr/lirmm/graphik/DEFT/gad/GADEdge.class
 fr/lirmm/graphik/DEFT/io/parser/DLGP2Parser$1.class
+fr/lirmm/graphik/DEFT/gad/CompactDerivation.class
 fr/lirmm/graphik/DEFT/dialectical_tree/DialecticalTree$Node.class

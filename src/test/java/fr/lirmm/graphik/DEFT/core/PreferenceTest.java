@@ -15,7 +15,7 @@ import fr.lirmm.graphik.util.stream.IteratorException;
 
 public class PreferenceTest {
 	@Test
-	public void testPreferenceParsing() {
+	public void testPreferenceParsing() throws IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		
 		kb.addRule("[r1] p(X) :- q(X).");

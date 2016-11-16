@@ -88,8 +88,9 @@ public class DefeasibleKB {
 	
 	/**
 	 * Simple constructor, creates an empty knowledge base.
+	 * @throws IteratorException 
 	 */
-	public DefeasibleKB() {
+	public DefeasibleKB() throws IteratorException {
 		// Everything is initialized to empty.
 		this.strictAtomSet = new DefaultInMemoryGraphAtomSet();
 		this.defeasibleAtomSet = new DefaultInMemoryGraphAtomSet();
@@ -112,22 +113,25 @@ public class DefeasibleKB {
 	
 	/**
 	 * Creates a knowledge base from a stored DLGP file using the file's path string.
+	 * @throws IteratorException 
 	 */
-	public DefeasibleKB(String file) throws FileNotFoundException, AtomSetException {
+	public DefeasibleKB(String file) throws FileNotFoundException, AtomSetException, IteratorException {
 		this(new File(file));
 	}
 	
 	/**
 	 * Creates a knowledge base from a DLGP file.
+	 * @throws IteratorException 
 	 */
-	public DefeasibleKB(File file) throws FileNotFoundException, AtomSetException {
+	public DefeasibleKB(File file) throws FileNotFoundException, AtomSetException, IteratorException {
 		this(new FileReader(file));
 	}
 	
 	/**
 	 * Creates a knowledge base from a DLGP file.
+	 * @throws IteratorException 
 	 */
-	public DefeasibleKB(Reader reader) throws FileNotFoundException, AtomSetException {
+	public DefeasibleKB(Reader reader) throws FileNotFoundException, AtomSetException, IteratorException {
 		this();
 		this.add(reader);
 	}
@@ -432,6 +436,12 @@ public class DefeasibleKB {
 		return status;
 	}
 	
+	
+	public int getEntailmentStatus(Atom atom) {
+		int status = DefeasibleKB.NOT_ENTAILED;
+		
+		return status;
+	}
 	/**
 	 * Displays the facts of this Knowledge base as a string.
 	 */
