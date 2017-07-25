@@ -37,7 +37,7 @@ public class GADTest {
 		List<CompactDerivation> derivations = kb.gad.getCompactDerivationFor(atom);
 		
 		for(CompactDerivation deriv : derivations) {
-			System.out.println(deriv.toString());
+			//System.out.println(deriv.toString());
 		}
 		
 		assertTrue("Failure - Defeasible rule set must not be empty.", true);
@@ -62,10 +62,10 @@ public class GADTest {
 		List<CompactDerivation> derivations = kb.gad.getCompactDerivationFor(atom);
 		
 		for(CompactDerivation deriv : derivations) {
-			System.out.println(deriv.toString());
+			//System.out.println(deriv.toString());
 		}
 		
-		System.out.println("entailment sattus: " + kb.af.updateAtomEntailmentStatus(atom));
+		//System.out.println("entailment sattus: " + kb.af.updateAtomEntailmentStatus(atom));
 		
 		assertTrue("Failure - Defeasible rule set must not be empty.", true);
 	}
