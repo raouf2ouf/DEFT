@@ -26,13 +26,11 @@ import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultAtom;
 import fr.lirmm.graphik.graal.core.atomset.LinkedListAtomSet;
-import fr.lirmm.graphik.graal.core.factory.ConjunctiveQueryFactory;
+import fr.lirmm.graphik.graal.core.factory.DefaultConjunctiveQueryFactory;
 import fr.lirmm.graphik.graal.core.term.DefaultTermFactory;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.forward_chaining.DefaultChase;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.forward_chaining.SccChase;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.DefaultRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -105,7 +103,7 @@ public class Derivation implements Iterable<GADEdge>{
 		AtomSet store = this.getAtoms();
 		
 		// Apply the rules and saturate the set of facts
-		Chase chase = new ConfigurableChase(strictRules, store, new RestrictedChaseStopCondition());
+		Chase chase = new SccChase<AtomSet>(strictRules.iterator(), store);
 		chase.execute();
 		
 		RuleApplier<Rule, AtomSet> ruler = new DefaultRuleApplier<AtomSet>();
@@ -115,9 +113,9 @@ public class Derivation implements Iterable<GADEdge>{
 			}
 		}
 		
-		ConjunctiveQuery cq = ConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(new DefaultAtom(Predicate.BOTTOM, DefaultTermFactory.instance().createVariable("X"))));
+		ConjunctiveQuery cq = DefaultConjunctiveQueryFactory.instance().create(new LinkedListAtomSet(new DefaultAtom(Predicate.BOTTOM, DefaultTermFactory.instance().createVariable("X"))));
 			
-		CloseableIterator<Substitution> consistency = StaticHomomorphism.instance().execute(cq, store);
+		CloseableIterator<Substitution> consistency = SmartHomomorphism.instance().execute(cq, store);
 		return !consistency.hasNext();
 	}
 	

@@ -18,7 +18,7 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.core.Term;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -41,7 +41,7 @@ public class GraphOfAtomDependency {
 	/* --------------------------------
 	 * Public Methods
 	 * -------------------------------- */
-	public void initialise(AtomSet atomset) throws IteratorException{
+	public void initialise(AtomSet atomset) throws IteratorException {
 		this.map.clear();
 		CloseableIterator<Atom> it = atomset.iterator();
 		while (it.hasNext()) {
@@ -153,7 +153,7 @@ public class GraphOfAtomDependency {
 		
 		ConjunctiveQuery newquery = new DefaultConjunctiveQuery(query.getLabel(), query.getAtomSet(), new LinkedList(query.getAtomSet().getTerms(Term.Type.VARIABLE)));
 		
-		CloseableIterator<Substitution> substitutions = StaticHomomorphism.instance().execute(newquery, store);
+		CloseableIterator<Substitution> substitutions = SmartHomomorphism.instance().execute(newquery, store);
 		while(substitutions.hasNext()) {
 			Substitution sub = substitutions.next();
 			InMemoryAtomSet atoms = sub.createImageOf(query.getAtomSet());

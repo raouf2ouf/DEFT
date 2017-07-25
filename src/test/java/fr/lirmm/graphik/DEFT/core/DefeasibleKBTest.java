@@ -67,6 +67,15 @@ public class DefeasibleKBTest {
 	}
 	
 	@Test
+	public void testParserLabelSpecialChars() throws IteratorException, AtomSetException {
+		DefeasibleKB kb = new DefeasibleKB();
+
+		kb.addAtom("[DEFT r1] p(a).");
+
+		assertFalse("Failure - Defeasible atom set must not be empty.", kb.defeasibleAtomSet.isEmpty());
+	}
+	
+	@Test
 	public void testParseDefeasibleAtom() throws AtomSetException, IteratorException {
 		DefeasibleKB kb = new DefeasibleKB();
 		

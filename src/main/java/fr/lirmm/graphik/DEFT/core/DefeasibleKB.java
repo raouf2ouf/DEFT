@@ -38,11 +38,13 @@ import fr.lirmm.graphik.graal.api.forward_chaining.ChaseException;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
+import fr.lirmm.graphik.graal.api.io.ParseException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
+//import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
 import fr.lirmm.graphik.graal.core.ruleset.LinkedListRuleSet;
-import fr.lirmm.graphik.graal.forward_chaining.ConfigurableChase;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.forward_chaining.SccChase;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.graal.io.dlp.DlgpParser;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -92,9 +94,9 @@ public class DefeasibleKB {
 	 */
 	public DefeasibleKB() throws IteratorException {
 		// Everything is initialized to empty.
-		this.strictAtomSet = new DefaultInMemoryGraphAtomSet();
-		this.defeasibleAtomSet = new DefaultInMemoryGraphAtomSet();
-		this.facts = new DefaultInMemoryGraphAtomSet();
+		this.strictAtomSet = new DefaultInMemoryGraphStore();
+		this.defeasibleAtomSet = new DefaultInMemoryGraphStore();
+		this.facts = new DefaultInMemoryGraphStore();
 
 		this.strictRuleSet = new LinkedListRuleSet();
 		this.defeasibleRuleSet = new LinkedListRuleSet();
@@ -286,7 +288,7 @@ public class DefeasibleKB {
 	 * @throws ChaseException 
 	 */
 	public void saturateWithoutCleaning() throws ChaseException {
-		Chase chase = new ConfigurableChase(this.rules, this.facts,
+		Chase chase = new SccChase<AtomSet>(this.rules.iterator(), this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}
@@ -300,7 +302,7 @@ public class DefeasibleKB {
 		rulesWithNc.addAll(this.rules.iterator());
 		rulesWithNc.addAll(this.negativeConstraintSet.iterator());
 		
-		Chase chase = new ConfigurableChase(rulesWithNc, this.facts,
+		Chase chase = new SccChase<AtomSet>(rulesWithNc.iterator(), this.facts,
 				new GADRuleApplicationHandler(this.gad).getRuleApplier());
 		chase.execute();
 	}
@@ -318,10 +320,11 @@ public class DefeasibleKB {
 	 * Query the knowledge base using a dlgp query string, e.g.: "? :- p(a)."
 	 * @param queryString This is the string representing the query in dlgp format.
 	 * @return CloseableIterator<Substitution> Iterator over the possible substitutions that satisfies the query.
+	 * @throws ParseException Problem Parsing Query
 	 * @exception HomomorphismException .
 	 */
 	public CloseableIterator<Substitution> query(String queryString)
-			throws HomomorphismException {
+			throws HomomorphismException, ParseException {
 		ConjunctiveQuery query = DlgpParser.parseQuery(queryString);
 		return this.query(query);
 	}
@@ -338,7 +341,7 @@ public class DefeasibleKB {
 				query.getLabel(), query.getAtomSet(), new LinkedList<Term>(
 						query.getAtomSet().getTerms(Term.Type.VARIABLE)));
 		// Atoms that match the query
-		CloseableIterator<Substitution> substitutions = StaticHomomorphism
+		CloseableIterator<Substitution> substitutions = SmartHomomorphism
 				.instance().execute(newquery, this.facts);
 
 		return substitutions;
@@ -356,7 +359,7 @@ public class DefeasibleKB {
 			throws HomomorphismException, IteratorException {
 		ConjunctiveQuery query = DlgpParser.parseQuery(q);
 
-		InMemoryAtomSet results = new DefaultInMemoryGraphAtomSet();
+		InMemoryAtomSet results = new DefaultInMemoryGraphStore();
 		CloseableIterator<Substitution> substitutions = this.query(query);
 
 		while (substitutions.hasNext()) {

@@ -21,8 +21,8 @@ import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismException;
 import fr.lirmm.graphik.graal.api.homomorphism.HomomorphismFactoryException;
 import fr.lirmm.graphik.graal.core.DefaultConjunctiveQuery;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.CloseableIteratorWithoutException;
 import fr.lirmm.graphik.util.stream.IteratorException;
@@ -66,11 +66,11 @@ public class ArgumentationFramework {
 			// Test if the first Atom of the NC can be mapped to an atom (or atoms) in the support of the argument.
 			
 			// Note: DefaultConjunctiveQuery only accepts a set, so we put the atom in a set 'atomSettified'
-			InMemoryAtomSet atomSettified = new DefaultInMemoryGraphAtomSet();
+			InMemoryAtomSet atomSettified = new DefaultInMemoryGraphStore();
 			atomSettified.add(supportAtom);			
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(atomSettified);
 			
-			CloseableIterator<Substitution> substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
+			CloseableIterator<Substitution> substitutions = SmartHomomorphism.instance().execute(query, supportAtoms);
 			
 			if(!substitutions.hasNext()) { // the first NC atom cannot be mapped to atoms in the support of the argument.
 				// Test if the second Atom of the NC can be mapped to the support.
@@ -79,12 +79,12 @@ public class ArgumentationFramework {
 				attackerAtom = supportAtom;
 				supportAtom = tmp;
 				
-				atomSettified = new DefaultInMemoryGraphAtomSet();
+				atomSettified = new DefaultInMemoryGraphStore();
 				atomSettified.add(supportAtom);
 				
 				query = new DefaultConjunctiveQuery(atomSettified);
 				
-				substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
+				substitutions = SmartHomomorphism.instance().execute(query, supportAtoms);
 				
 				if(!substitutions.hasNext()) { // this NC does not affect the argument because both 
 					// its atoms cannot be mapped to atoms in the support of the argument.
@@ -101,11 +101,11 @@ public class ArgumentationFramework {
 				Atom halfGroundAttackerAtom = sub.createImageOf(attackerAtom); // some variables might still be unground if they didn't show up in the support
 				
 				// Find all possible substitutions for AttackerAtom
-				InMemoryAtomSet halfGroundAttackerAtomSet = new DefaultInMemoryGraphAtomSet();
+				InMemoryAtomSet halfGroundAttackerAtomSet = new DefaultInMemoryGraphStore();
 				halfGroundAttackerAtomSet.add(halfGroundAttackerAtom);			
 				DefaultConjunctiveQuery attackerQuery = new DefaultConjunctiveQuery(halfGroundAttackerAtomSet);
 				
-				CloseableIterator<Substitution> attackerSubstitutions = StaticHomomorphism.instance().execute(attackerQuery, kb.facts);
+				CloseableIterator<Substitution> attackerSubstitutions = SmartHomomorphism.instance().execute(attackerQuery, kb.facts);
 				
 				while(attackerSubstitutions.hasNext()) {
 					Substitution attackerSub = attackerSubstitutions.next();
@@ -275,7 +275,7 @@ public class ArgumentationFramework {
 	
 	
 	public AtomSet getAttackersFor(AtomSet supportAtoms) throws AtomSetException, HomomorphismException, HomomorphismFactoryException, RuleApplicationException, ChaseException, IteratorException {
-		AtomSet attackers = new DefaultInMemoryGraphAtomSet();
+		AtomSet attackers = new DefaultInMemoryGraphStore();
 		
 		for(Rule r : kb.negativeConstraintSet) {
 			CloseableIteratorWithoutException<Atom> ncIt = r.getBody().iterator();
@@ -293,11 +293,11 @@ public class ArgumentationFramework {
 			// Test if the first Atom of the NC can be mapped to an atom (or atoms) in the support of the argument.
 			
 			// Note: DefaultConjunctiveQuery only accepts a set, so we put the atom in a set 'atomSettified'
-			InMemoryAtomSet atomSettified = new DefaultInMemoryGraphAtomSet();
+			InMemoryAtomSet atomSettified = new DefaultInMemoryGraphStore();
 			atomSettified.add(supportAtom);			
 			DefaultConjunctiveQuery query = new DefaultConjunctiveQuery(atomSettified);
 			
-			CloseableIterator<Substitution> substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
+			CloseableIterator<Substitution> substitutions = SmartHomomorphism.instance().execute(query, supportAtoms);
 			
 			if(!substitutions.hasNext()) { // the first NC atom cannot be mapped to atoms in the support of the argument.
 				// Test if the second Atom of the NC can be mapped to the support.
@@ -306,12 +306,12 @@ public class ArgumentationFramework {
 				attackerAtom = supportAtom;
 				supportAtom = tmp;
 				
-				atomSettified = new DefaultInMemoryGraphAtomSet();
+				atomSettified = new DefaultInMemoryGraphStore();
 				atomSettified.add(supportAtom);
 				
 				query = new DefaultConjunctiveQuery(atomSettified);
 				
-				substitutions = StaticHomomorphism.instance().execute(query, supportAtoms);
+				substitutions = SmartHomomorphism.instance().execute(query, supportAtoms);
 				
 				if(!substitutions.hasNext()) { // this NC does not affect the argument because both 
 					// its atoms cannot be mapped to atoms in the support of the argument.

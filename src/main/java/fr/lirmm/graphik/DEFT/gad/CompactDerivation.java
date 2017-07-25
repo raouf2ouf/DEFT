@@ -1,17 +1,12 @@
 package fr.lirmm.graphik.DEFT.gad;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.lirmm.graphik.DEFT.core.DefeasibleAtom;
-import fr.lirmm.graphik.DEFT.core.DefeasibleRule;
 import fr.lirmm.graphik.graal.api.core.Atom;
 import fr.lirmm.graphik.graal.api.core.AtomSet;
 import fr.lirmm.graphik.graal.api.core.AtomSetException;
-import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphAtomSet;
+import fr.lirmm.graphik.graal.core.atomset.graph.DefaultInMemoryGraphStore;
 
 public class CompactDerivation {
 	private static final Logger LOGGER = LoggerFactory
@@ -24,8 +19,8 @@ public class CompactDerivation {
 	
 	public CompactDerivation(Atom a) {
 		this.forAtom = a;
-		this.branchingAtoms = new DefaultInMemoryGraphAtomSet();
-		this.nonBranchingAtoms = new DefaultInMemoryGraphAtomSet();
+		this.branchingAtoms = new DefaultInMemoryGraphStore();
+		this.nonBranchingAtoms = new DefaultInMemoryGraphStore();
 		this.isDefeasible = false;
 	}
 	

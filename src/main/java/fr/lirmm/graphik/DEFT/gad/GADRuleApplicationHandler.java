@@ -7,11 +7,10 @@ import fr.lirmm.graphik.graal.api.core.Substitution;
 import fr.lirmm.graphik.graal.api.forward_chaining.ChaseHaltingCondition;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplicationHandler;
 import fr.lirmm.graphik.graal.api.forward_chaining.RuleApplier;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.ChaseStopConditionWithHandler;
-import fr.lirmm.graphik.graal.forward_chaining.halting_condition.RestrictedChaseStopCondition;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.FrontierRestrictedChaseHaltingCondition;
+import fr.lirmm.graphik.graal.forward_chaining.halting_condition.HaltingConditionWithHandler;
 import fr.lirmm.graphik.graal.forward_chaining.rule_applier.ExhaustiveRuleApplier;
-import fr.lirmm.graphik.graal.homomorphism.DefaultHomomorphismFactory;
-import fr.lirmm.graphik.graal.homomorphism.StaticHomomorphism;
+import fr.lirmm.graphik.graal.homomorphism.SmartHomomorphism;
 import fr.lirmm.graphik.util.stream.CloseableIterator;
 import fr.lirmm.graphik.util.stream.IteratorException;
 
@@ -49,13 +48,12 @@ public class GADRuleApplicationHandler implements RuleApplicationHandler{
 	
 	
 	public RuleApplier<Rule, AtomSet> getRuleApplier() {
-		return getRuleApplier(new RestrictedChaseStopCondition());
+		return getRuleApplier(new FrontierRestrictedChaseHaltingCondition());
 	}
 	
 	public RuleApplier<Rule, AtomSet> getRuleApplier(ChaseHaltingCondition chaseCondition) {
-		ChaseStopConditionWithHandler chaseConditionHandler = new ChaseStopConditionWithHandler(chaseCondition, this);
-		RuleApplier<Rule, AtomSet> ruleApplier = new ExhaustiveRuleApplier<AtomSet>(StaticHomomorphism.instance(), chaseConditionHandler); 
-		//DefaultHomomorphismFactory.instance().getConjunctiveQuerySolver()
+		HaltingConditionWithHandler chaseConditionHandler = new HaltingConditionWithHandler(chaseCondition, this);
+		RuleApplier<Rule, AtomSet> ruleApplier = new ExhaustiveRuleApplier<AtomSet>(SmartHomomorphism.instance(), chaseConditionHandler); 
 		
 		return ruleApplier;
 	}
